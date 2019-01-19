@@ -27,6 +27,7 @@ Git             --> https://git-scm.com/download/win
 Die Applikation besteht aus zwei Einzel-Applikationen, die in jeweils
 eigenen Unterordnern angelgt wurden.
 
+GIT
 Das Git-Repository wird zur Vereinfachung so angelegt, dass es beide Applikationen beinhaltet.
 Hierzu wird im Prompt das übergeordnete Verzeichnis beider Applikationen aufgerufen.
 Anschließend wird mittels dem Befehl "git init" ein neues Repository angelegt.
@@ -35,6 +36,18 @@ eine neue Datei mit dem Namen .gitignore angelegt.
 In dieser Datei werden zeilenweise alle Verzeichnisse und Dateien aufgelistet,
 die von Git nicht im Repository zu berücksichtigen sind.
 Wildcards (*) können dabei in den Angaben verwendet werden.
+Um das Repository zu initialisieren ist wie folgt vorzugehen:
+    1) Anklicken des Source Control Buttons in VS Code
+    2) Alle vorgeschlagenen Änderungen dem "Staging hinzufügen"
+       durch ein Anklicken des "+" Buttons
+    3) In der Kommandozeile folgenden Befehl eingeben und mit STRG+ENTER bestätigen
+        Initial Commit
+    4) Auf der Git-Hub-Seite ist ein neues Repository anzulegen.
+       Nach dem dortigen Erstellen wird u.a. dort folgender Link angezeigt,
+       der dann innerhalb des Applikationsverzeichnisses am Prompt auszuführen ist:
+        git remote add origin https://github.com/Twiety/DatingApp.git
+       Anschließend kann dann innerhalb von VS Code (Seite Source-Control)
+       ein Push der Dateien zu Github ausgelöst werden.
 
 
 1. DatingApp.Api (Server-Applikation)
@@ -50,7 +63,90 @@ Wildcards (*) können dabei in den Angaben verwendet werden.
     DatingApp.API mit folgendem Befehl:
     dotnet run (oder) dotnet watch run
     
+    CodeFirst-Modell
+    Zum Erstellen der Datenbank wird das Prinzip "CodeFirst-Modell" angewendet.
+    Nachdem eine Klasse erstellt wurde, die durch eine Tabelle in der Datenbank abzubilden ist,
+    wird wie folgt vorgegangen.
+    - In der Datenkontextklasse wird ein DbSet<> vom Typ dieser Klasse angelegt
+    - Erstellen eines Migrationsskriptes mit folgendem Befehl
+        dotnet ef migrations add NameDerMigration
+    - Anwenden des Migrationsskriptes mit folgendem Befehl
+        dotnet ef database update
 
+    Repository-Pattern
+    Der Zugriff auf die User-Dasten erfolgt mittels des Repository-Pattern.
+    Ein Controller der auf User-Daten zugreifen soll, wird somit von der Logik zum Zugriff
+    auf die EF-Daten entkoppelt.
+    Hierzu wurde im Ordner Data das Interface IAuthRepository angelegt.
+    Das Interface beschreibt die Funktionen, die die konkrete Klasse für
+    den Zugriff auf die EF-Daten zur Verfügung stellen muss.
+    Die konkrete Klasse wurde ebenfalls im Ordner Data erstellt und
+    trägt den Namen AuthRepository.CS und implementiert die zuvor
+    genannte Schnittstelle.
+    In der StartUp-Klasse der Server-Applikation wird dann die konkrete Klasse
+    unter Angabe der Schnittstelle als Service registriert. (siehe Funktion ConfigureServices)
+    
+    Controller
+    Im Verzeichnis Controllers werden C#-Klassen angelegt, deren NameDerMigration
+    (per Definition) immer auf Controller endet. Die Klassen und deren Funktionen werden mit speziellen
+    Attributen aus dem Namespace Microsoft.AspNetCore.Mvc ausgezeichnet.
+    Dies ist notwendig, um zu bestimmen wie die Methoden der Klasse im Rahmen der Web-API
+    aufgerufen werden.
+    Die eigenen Controller-Klassen müssen von einer der beiden Dot.Core Klassen erben,
+    um als Web-Api verwendet zu werden.
+    - ControllerBase    --> ausreichend, wenn Klasse als reine Web-Api verwendet werden soll.
+    - Controller        --> erforderlich bei Verwendung von serverseitigen Views (MVC)
+    
+    Data-Transfer-Object (DTO)
+    Die im Ordner Models erstellten Objekte können manchmal einen Struktur aufweisen,
+    die zum Austausch der Daten zwischen Client und Server ungeeignet ist.
+    Manche Attribute (z.B. PasswordHash, PasswordSalt) sollten außerdem ausschließlich
+    auf der Serverseite bekannt sein.
+    Aus diesem Grund werden sogenannte DTOs erstellt, 
+
+    Datenvalidierung
+    Die KLassen der Daten-Objekte (Entitäten) können mit Attributen annotiert werden,
+    die eine automatische Validierung der Angaben ermöglichen.
+    Voraussetzung ist das der Namespace System.Component.DataAnnotations importier wird.
+    Folgende Attribute können beispielhaft gesetzt werden:
+    [Required]
+    [StringLength(8, MinimumLength = 4, ErrorMessage = "Message")]
+
+    Authentifizierung mittels Token
+    Nach einem erfolgreichen Login wird dem Browser JWT-Token zugeschickt.
+    Dieses wird dann in allen nachfolgenden Requests verwendet, um den User
+    zu authentifizieren. Der Server prüft nur noch das Token, greift aber nicht
+    mehr auf die Datenbank zu, um die Zugriffsrecht zu prüfen.
+    Das JWT-Token beseht aus drei Teilen:
+    - Header    --> Art des Token, verwendete Verschlüsselung
+    - Payload   --> zeitlicher Gültigkeitsraum, beliebige Angaben zum User
+    - Secret    --> Beinhaltet obige Angaben in gehashter Form, wird allerdings nie zum Client gesendet.
+    Zur Verschlüsselung des Scret wird in appsettings.json im Bereich appsettings
+    eine Variabel mit dem Namen Token angelegt. Der Value dieser Variabel wird auf
+    ein möglichts komplexes Passwort (min 12 Zeichen) gesetzt.
+    Anschließend wird ein Token-Descriptor erstellt.
+    1) Der Aufbau des Tokens (Bereich Payload) wird durch ein sogenanntes Claim-Array definiert.
+    2) Der Key zur Verschlüsselung wird gehashed und zur Erstellung eines Credentials verwendet.
+    3) Erstellung eines Token-Descriptors unter Verwendung des Claim-Array, eines Ablaufdatums
+       und dem erstellten Credentials.
+    Nach dem Erstellen eines Token-Handlers erfolgt nun mit diesem durch die Verwendung
+    des Token-Descriptors die eigentliche Erstellung des Tokens.
+    Das erstellte Token wird abschließend als Parameter des Return-Code an den aufrufenden Browser
+    zurückgegeben. Auf der Website https://jwt.io kann der Inhalt des Token geprüft werden.
+
+    Um einen API-Controller und seine Funktionen vor einem nicht authentifizierten Zugriff zu schützen,
+    muss der Controller oder einer seiner Funktionen mit dem Attribut [Authorize] versehen werden.
+    Sollte der Controller mit diesem Attribut versehen sein, so ist für alle Funktionen
+    nur ein authentifierter Zugriff möglich. Mit dem Attribut [AllowAnonymous] kann eine einzelne
+    Funktion wieder für einen nicht authentifierter Zugriff freigegeben werden.
+
+    Damit die Applikation die Authentifizierung überhaupt prüft, ist die start.cs in zwei Punkten anzupassen.
+    1) Die Authentifizierungsprüfung ist als Service in der Funktion ConfigureServices zu registrierten.
+       In dieser Funktion wird mittels der Anweisung services.AddAuthentication der Service registriert
+       und konfiguriert. U.a. wird hier auch auf die Variabel Token in der Datei appsettings.json Verweisen,
+       die zuvor zur Verschlüsselung des Token verwendet wurde (siehe oben).
+    2) In der Ausgabe-Pipeline (siehe Funktion Configure) ist der Authentifizierungs-Service einzufügen.
+       Dabei muss dieser auf jeden Fall, vor der MVC-Funktion aufgeführt werden.
 
 2. DatingApp-SPA (Client-Applikation)
     Hierbei handelt es sich um eine clientseitige Single-Page-Applikation (SPA),

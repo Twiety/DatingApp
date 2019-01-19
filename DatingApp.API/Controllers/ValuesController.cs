@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using DatingApp.API.Data;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -12,6 +13,12 @@ namespace DatingApp.API.Controllers
     [ApiController]
     public class ValuesController : ControllerBase
     {
+        // Der Value-Controller erbt die Funktionen von ControllerBase
+        // alternativ könnte auch von der Klasse Controller geerbet werden.
+        // Letztere Basis-Klasse ist notwendig, wenn View (MVC) genutzt werden sollen.
+        // Da Angular seine eigenen Views produziert, braucht auf der Serverseite
+        // nur eine API zur Verfügung gestellt werden.
+
         private readonly DataContext _context;
 
         // Klassenkonstruktor mit Übergabe des Datenbank-Kontextes
@@ -23,6 +30,7 @@ namespace DatingApp.API.Controllers
 
         // Aynchroner Abruf
         // GET api/values
+        [Authorize]
         [HttpGet]
         public async Task<IActionResult> GetValues()
         {
@@ -45,6 +53,7 @@ namespace DatingApp.API.Controllers
         // }        
 
         // Asynchroner Abruf
+        [AllowAnonymous]
         [HttpGet("{id}")]
         public async Task<IActionResult> GetValue(int id)
         {
