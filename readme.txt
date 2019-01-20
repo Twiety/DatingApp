@@ -238,4 +238,82 @@ Um das Repository zu initialisieren ist wie folgt vorzugehen:
         Bei Bedarf könnten dann eigene CSS-Dateien hier aufgeführt werden.
         Die Reihenfolge der Zeilen ist dabei von Bedeutung, da nachgelagerte Dateien
         die Angaben in zuvor genannten Dateien überschreiben.
+    Folgende Beispielseite wird als Grundlage für die Navigation verwendet.
+    https://getbootstrap.com/docs/4.2/examples/jumbotron/
+    Aus dem Quellcode dieser Seite wurde die Navigation (Tag-Nav) in die Zwischenablage kopiert.
+    In der Applikation DatingApp-SPA wurde dann eine neue Komponente mit dem Namen Nav angelegt.
+    Visual Code erstellt dann einen Ordner mit dem Namen Nav, legt die entsprechenden Dateien an
+    und fügt in der Datei app.module.ts die entsprechenden Verweise ein.
+    In die Datei nav.component.html wird anschließend der Inhalt der Zwischenablage kopiert.
+    Der eingefügte HTML-Code wurde abschließend auf das Wesentlichste reduziert und an die 
+    gewünschte Struktur und Namensgebung angepasst.
+    Hinweis: Das oberste Tag enthält die CSS-Anweisung fixed-top, welche allerdings dazu führt,
+    dass nachfolgende HTML-Tags (wie z.B. die Headline der Applikation) im oberen Bereich
+    durch die Navigation verdeckt werden.
 
+    Angular-Formulare
+    1) Damit Angular mit Formularen umgehen kann, sind zunächst in app.module.ts
+       Anweisungen zum Import von FormsModule einzufügen.
+
+    2) Ts-Datei der Komponente wie folgt anzupassen
+        --> Anlegen einer Funktion zur Verarbeitung der Formular-Eingaben
+        --> Variabel zur Aufnahme des Objekts anlegen (nachfolgend als varObjectName bezeichnet)
+
+    3) Das Html-Formular ist wie folgt anzupassen:
+        - Attribute dem Forumlar-Tag hinzufügen 
+            -     #nameDesForms="ngForm"
+            -     (ngSubmit)="formFunction()"
+        - Attribute den Eingabe-Controls hinzufügen
+            - name="NameDesControls"
+            - required               
+              --> wenn Eingabe zwingend erforderlich ist
+            - [(ngModel)]="varObjectName.attributname"
+              --> Verbindet das Control mit dem Datenmodell
+              --> mittels Code-Snippet a-N kann die Eingabe erleichtert werden
+            - #VariabelName="ngModel" 
+            --> Diese Angabe ist NICHT erforderlich, dient aber einem einfacheren Zugriff auf das Control
+            --> Mit Hilfe dieser Angabe wird eine Variabel erstellt,
+                die ebenfalls an das Datenmodell und das Control gebunden wird.
+                Der Control-Value wird damit automatisch in diese Variabel übertragen
+            --> Mit folgendem Code könnte dann auf den Inhalt des Controls auch außerhalb
+                des Formulars zugegriffen werden.
+                {{VariabelName.value}}
+        - Attribut dem Button hinzufügen
+            - [disabled]="!nameDesForms.valid"
+            --> Durch die Angabe, wird der Button erst aktiviert, wenn die erforderlichen
+                Angaben für das Formular vollständig sind.
+
+    Angular-Service
+    Um Funktionen innerhalb von Angular wieder verwenden zu können, ist es ratsam diese
+    Funktionen als Service zu definieren. Ein Service kann dann mit seiner Funktionalität
+    in die Komponente injeziert werden.
+    Die Erstellung eines Service in Angular sieht wie folgt aus:
+    - Erstellung eines eigenen Verzeichnisses zur Aufnahme der Services (optional)
+    - Erstellung des Service mittels des entsprechenden Kontext-Menüs von VS-Code
+    --> Es werden entsprechende Template-Dateien erstellt.
+        Entscheidend für einen Service ist der Dekorator in den angelegten Dateien.
+        Dieser kennzeichnet die Datei als injezierbar. Hierbei wird auch angegeben,
+        in welchem Modul der Service injeziert werden kann. (Standard Root)
+    - In der Datei app.modul.ts ist der Bereich providers (Array) um den Eintrag
+      des neuen Service zu ergänzen..
+      Da es sich um einen lokalen Service handelt, wird VS-Code automatisch
+      eine entsprechende Import-Anweisung in app.modul.ts anlegen.
+    - Die Anwendung des Service innerhalb eine Komponente gestaltet sich wie folgt:
+        --> Der Konstruktor der Komponente muss eine Variabel vom Typ des erstellten
+            Service entgegennehmen. Hierzu ist außerdem eine entsprechend Import-Anweisung
+            für die Komponente zu erstellen. VS-Code erstellt diese automatisch,
+            allerdings kann die Pfadangabe fehlerhaft sein.
+
+    Angular - Strukturelle Direktive
+    Html-Tags können mit einer strukturellen Direktive versehen werden.
+    Kennzeichnen für eine Direktive ist der führende * in der Bezeichnung.
+    In Abhängikeit der Expression, die der Direktive folgt, nimmt Angular Einfluss auf das
+    hiermit ausgezeichnete Tag und alle untergeordneten DOM-Objekte.
+    *ngIf='functionName'  --> In Abhängigkeit des zurückgegebenen Wertes der angegebenen Funktion
+                              (true/false) wird das betreffende Html-Tag ein- bzw. ausgeblendet.
+
+    <form class="form-inline my-2 my-lg-0">
+      <input class="form-control mr-sm-2" type="text" placeholder="Username">
+      <input class="form-control mr-sm-2" type="text" placeholder="Password">
+      <button class="btn btn-success my-2 my-sm-0" type="submit">Login</button>
+    </form>
