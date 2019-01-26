@@ -30,7 +30,7 @@ namespace DatingApp.API.Controllers
 
         // Aynchroner Abruf
         // GET api/values
-        [Authorize]
+        [AllowAnonymous]
         [HttpGet]
         public async Task<IActionResult> GetValues()
         {

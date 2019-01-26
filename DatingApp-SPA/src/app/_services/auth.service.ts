@@ -1,7 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { map } from 'rxjs/operators';
-import { bloomAdd } from '@angular/core/src/render3/di';
 
 @Injectable({
   providedIn: 'root'
@@ -58,4 +57,7 @@ login(model: any) {
     );
 }
 
+  register(model: any) {
+    return this.http.post(this.baseUrl + 'register', model);
+  }
 }

@@ -312,8 +312,34 @@ Um das Repository zu initialisieren ist wie folgt vorzugehen:
     *ngIf='functionName'  --> In Abhängigkeit des zurückgegebenen Wertes der angegebenen Funktion
                               (true/false) wird das betreffende Html-Tag ein- bzw. ausgeblendet.
 
-    <form class="form-inline my-2 my-lg-0">
-      <input class="form-control mr-sm-2" type="text" placeholder="Username">
-      <input class="form-control mr-sm-2" type="text" placeholder="Password">
-      <button class="btn btn-success my-2 my-sm-0" type="submit">Login</button>
-    </form>
+    Angular - Kommunikation zwischen Komponenten
+    1) Parent zu Child
+        Um einen Datenaustausch von einer Parent- zu einer Child-Komponente zu ermöglichen,
+        muus in der Child-Komponente eine Variabel mit dem @Input-Dekorator versehen werden.
+        Zur Verwendung dieses Dekorator muss die Import-Anweisung in TS-Datei der Child-Komponente
+        angepasst werden. 
+            import { Component, OnInit, Input } from '@angular/core';
+        In der TS-Datei wird dann eine Variabel zum Datenaustausch dann wie folgt angelegt.
+            @Input() valuesFromParent: any;
+        Die Parent-Komponente wird hinsichtlich des Tags zur Einbindung der Child-Komponente
+        so angepasst, dass in dem Tag die zuvor zum Input definierte Variabel aufgeführt wird.
+        Beispiel:
+        <app-childcomp [valuesFromParent]="values"></app-childcomp>
+        Die Parent-Komponente wird somit den Inhalt von values mittels einer eigenen Logik
+        laden und der Variabel in Child-Komponente zuweisen.
+    
+    2) Child zu Parent
+        Hierzu wird zunächst in der Child-Komponente eine Variable mit dem Dekorator @Output versehen.
+        Der Typ der Variabel wird auf EventEmitter gesetzt.
+          @Output() eventFromChild = new EventEmitter();
+        Sowohl der Output-Dekorator als auch der Variabelntyp EventEmitter benötigen eine Anpassung
+        der Import-Anweisung. Beide Namespaces befinden sich wie zuvor der Input-Dekorator in der Datei @angular/core.
+        Die vollständige Import-Anweisung sieht somit wie folgt aus:
+            import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+        In der Parent-Komponente müssen dann zwei Anpassungen vorgenommen werden.
+        Das Tag zur Einbindung der Child-Komponente ist wie folgt anzupassen:
+        (eventFromChild)="myFunctionInParent($event)"
+        In der TS-Datei der Parent-Komponente ist eine Funktion zur Verarbeitung des Events anzulegen.
+        (In diesem Fall wäre diese mit myFunctionInParent zu bezeichnen)
+
+
