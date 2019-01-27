@@ -148,6 +148,25 @@ Um das Repository zu initialisieren ist wie folgt vorzugehen:
     2) In der Ausgabe-Pipeline (siehe Funktion Configure) ist der Authentifizierungs-Service einzufügen.
        Dabei muss dieser auf jeden Fall, vor der MVC-Funktion aufgeführt werden.
 
+    Abfangen von Fehlern
+    Fehler können lokal durch Try-Catch abgefangen und verarbeitet werden.
+    Durch die Defintion eines Exception-Handlers in der Datei start.cs kann ein globales Abfangen von Fehlern erfolgen.
+    Durch die Berücksichtigung des Ausführungs-Kontextes der Applikation erfolgt die Ausgabe eines vollständigen
+    Fehlertextes nur im Entwicklungsmodus. In der Datei Properties/launchSettings.json (Angabe ASPNETCORE_ENVIRONMENT)
+    kann bestimmt werden ob die Applikation im Development- oder Production-Modus ausgeführt wird.
+    Der Exception-Handler startet einen eigenen Task in dem der aufgetretene Fehler ausgegeben wird.
+    Hierbei kann zunächst nur auf die Standardmethoden der Klasse HttpContext zugegriffen werden (also z.B. write, writeAsync).
+    Mittels einer Erweiterungsmethode, die als static definiert ist, kann die Klasse HttpContext 
+    um neue Funktionen ergänzt werden. Mit Hilfe der Erweiterungsmethode können somit
+    auch eigene Header-Angaben definiert werden.
+    Durch eigene Header-Angaben kann der irritierende Fehler des Cross-Domain-Zugriffs verhindert werden.
+    Auch in der Client-App können Fehler gobal abgefangen werden, 
+    siehe hierzu Kapitel "Angular - Globales Abfangen von Fehlern"
+
+
+
+
+
 2. DatingApp-SPA (Client-Applikation)
     Hierbei handelt es sich um eine clientseitige Single-Page-Applikation (SPA),
     in der Angular verwendet wird.
@@ -341,5 +360,17 @@ Um das Repository zu initialisieren ist wie folgt vorzugehen:
         (eventFromChild)="myFunctionInParent($event)"
         In der TS-Datei der Parent-Komponente ist eine Funktion zur Verarbeitung des Events anzulegen.
         (In diesem Fall wäre diese mit myFunctionInParent zu bezeichnen)
+
+Angular - globales Abfangen von Fehlern
+Zum globalen Abfangen von Fehlern wird eine Interceptor-Klasse eingerichtet,
+die den Response-Stream analysiert.
+Diese Klasse (siehe Verzeichnis _services) importiert u.a. den Namenspace HttpInterceptor.
+und muss als injectable gekennzeichnet werden.
+In dieser Klasse werden dediziert die Rückgabe-Header analysiert. 
+Beim Auftreten spezieller Header werden dann in unterschiedlichen If-Blöcken
+entsprechende Header-Informationen zur Ausgabe der eigentlichen Fehlermeldung verwendet.
+Danach ist ein Provider zu erstellen (Objekt-Variabel), der auf die zuvor erstelte Klasse verweist.
+Dieser Provider ist dann in app.modul.ts zu registrieren. Hierzu wird der neue Provider namentlich
+im Provider-Array eingefügt. Außerdem ist eine entsprechende Import-Anweisung in app.modul.ts einzufügen.
 
 

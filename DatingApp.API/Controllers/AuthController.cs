@@ -70,6 +70,16 @@ namespace DatingApp.API.Controllers
         [HttpPost("login")]
         public async Task<IActionResult> Login(UserForLoginDto userForLoginDto)
         {
+            // Lokaler Exception Handler
+            // try
+            // {
+                
+            // }
+            // catch (System.Exception)
+            // {
+            //     return StatusCode(500,"Computer really says no");
+            // }
+
             // User-Objekt mittels Repo-Objekt aus Datenbank laden
             // Sollte der Username existieren und Passwort richtig sein,
             // so wird ein entsprechendes Objekt zurückgegeben,

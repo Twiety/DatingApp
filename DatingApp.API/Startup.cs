@@ -1,12 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using DatingApp.API.Data;
+using DatingApp.API.Helpers;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -95,12 +99,33 @@ namespace DatingApp.API
         {
             // !!! In dieser Funktion ist auch die Reihenfolge von Bedeutung !!!
 
+            // Über die Umgebungsvariabel env.IsDevelopment wird bestimmt, in welchem
+            // Kontext die Applikation ausgeführt wird.
+            // Die Einstellung hierzu wird in der Datei Properties/launchSettings.json
+            // und dort in der Angabe ASPNETCORE_ENVIRONMENT geändert.
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
             }
             else
             {
+                // Globales Abfangen von Fehlern, wenn die Applikation Produktionsmodus aufgerufen wird.
+                // Der auslösende Fehler führt zum Ausführen eines Webrequests in einem neuen Task
+                // Diesem Request werden die Angaben zum Fehler übergeben damit diese bei Bedarf
+                // protokolliert werden können.
+                app.UseExceptionHandler(builder => {
+                    builder.Run(async context => {
+                        context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+                        // Ursprünglichen Fehler ermitteln
+                        var error = context.Features.Get<IExceptionHandlerFeature>();
+                        if(error != null)
+                        {
+                            context.Response.AddApplicationError(error.Error.Message);
+                            // Verwendung der Standardmethode WriteAsync der Klasse HttpContext zur Ausgabe des Fehlers.
+                            await context.Response.WriteAsync(error.Error.Message);
+                        }
+                    });
+                });
                 // app.UseHsts();
             }
 
