@@ -361,7 +361,9 @@ Um das Repository zu initialisieren ist wie folgt vorzugehen:
         In der TS-Datei der Parent-Komponente ist eine Funktion zur Verarbeitung des Events anzulegen.
         (In diesem Fall wäre diese mit myFunctionInParent zu bezeichnen)
 
+-----------------------------------------
 Angular - globales Abfangen von Fehlern
+-----------------------------------------
 Zum globalen Abfangen von Fehlern wird eine Interceptor-Klasse eingerichtet,
 die den Response-Stream analysiert.
 Diese Klasse (siehe Verzeichnis _services) importiert u.a. den Namenspace HttpInterceptor.
@@ -372,5 +374,126 @@ entsprechende Header-Informationen zur Ausgabe der eigentlichen Fehlermeldung ve
 Danach ist ein Provider zu erstellen (Objekt-Variabel), der auf die zuvor erstelte Klasse verweist.
 Dieser Provider ist dann in app.modul.ts zu registrieren. Hierzu wird der neue Provider namentlich
 im Provider-Array eingefügt. Außerdem ist eine entsprechende Import-Anweisung in app.modul.ts einzufügen.
+
+-----------------------------------------
+Alertify
+-----------------------------------------
+Dies ist eine JavaScript Bibliothek um Frontend-Dialoge zu erstellen.
+Die Installation erfolgt innerhalb der Angular-Applikation mit dem Befehl
+    npm install alertifyjs --save
+Damit der Build-Prozess der Angular-Applikation dieses Framework berücksichtigt
+ist die Datei angular.json anzupassen. In dieser Datei ist im Bereich Scripts der Pfad
+zur JavaScript-Bibliothek anzugeben.
+Damit auch die zugehörigen CSS-Styles berücksichtigt werden ist die Datei
+src/styles.css anzupassen. In dieser ist ein Verweis auf die Standard-CSS und ein Verweis
+auf das Bootstrap-Theme dieser Bibliothek einzufügen.
+Die Verwendung dieser Bibliothek erfolgt im Rahmen eines Angular-Service.
+Dieser Service dient als Wrapper zum Aufruf der Funktionen dieser Bibliothek.
+Alternativ könnte diese Bibliothek auch durch entsprechende Befehle direkt verwendet werden.
+Wie jeder Service muss auch dieser in app.moduel.ts registriert werden.
+Hierzu ist daher wie immer das Providers-Array und die Import-Anweisung zu ergänzen.
+Um den Service in einer Komponente nutzen zu können, ist der Service (wie gewohnt)
+im Konstruktor der Komponente zu übergeben.
+Innerhalb der Funktion der Komponente können dann die Methoden des Service und somit
+die Funktion von Alertify.js genuitzt werden.
+
+-----------------------------------------
+Auth0/angular-jwt
+-----------------------------------------
+Um die Token des Servers zu validieren wird die zuvor genannte Bibliothek verwendet
+    https://github.com/auth0/angular2-jwt
+Die Installation erfolgt mittels NPM im DatingApp-SPA Ordner
+    npm install @auth0/angular-jwt
+
+Um eine zentrale Validierung des Token zu ermöglichen, wird der AuthService um eine Funktion
+zur Validierung des Token erweitert (siehe Funktion loggedIn() in auth.service.ts).
+Zur Anzeige, ob der User eingeloggt ist oder nicht, verwendet die Navigations-Komponente dann
+diese vom Service angebotene Funktion. Das HTML-Template der Navigations-Komponente könnte dann
+mittels Interpolation auf einzelne Eigenschaften des Token zugreifen.
+    {{authService.decodedToken.unique_name}}
+Hierbei gibt es allerdings eine Reihe von Problemen.
+- Der authService wird der Komponente als privates Objekt injeziert.
+  VS Code bemängelt dies, eine Ausführung ist allerdings trotzdem möglich.
+  Dies begründet sich in der Tatsache, dass in JavaScript (im Gegensatz zu Typescript) 
+  keine Unterscheidung zwischen public und private Variabeln existiert.
+  Durch die Angabe von public im Konstruktor kann dieses Problem behoben werden.
+- Durch die Angabe des Fragezeichens in der Interpolations-Answeisung ist die Existenz der Property optional.
+    {{authService.decodedToken?.unique_name}}
+  Bei einem Seiten-Refresh kommt somit zu keiner Fehlermeldung während der Laufzeit,
+  die Interpolation gibt dann aber auch nur noch einen leeren String aus
+  
+  Dies begründet sich durch die Struktur der Login-Methode.
+  Die Login-Funktion der Komponente und somit der Service werden nur beim Anklicken des Login-Buttons
+  aufgerufen. Somit wird auch nur in diesem Fall der Wert der Variabel decodedToken gesetzt.
+  Bei einem Seiten-Refresh steht der Inhalt nicht mehr zur Verfügung.
+  Durch eine Anpassung der Start-Komponente (also app.component) kann bereits beim Initialisieren
+  der Applikation das Token, wenn vorhanden, geladen werden.
+  Hierzu sind folgende Anpassungen in app.component.ts vorzunehmen.
+
+  - Anpassung der Klassendefintion
+    export class AppComponent implements OnInit ...
+  - Anpassung der Import-Anweisung um den Namespace OnInit, AuthService und JwtHelperService zu importieren.
+  - Konstruktor anlegen, in dem der AuthService in die Komponente injeziert wird
+  - Funktion ngOnInit() anlegen. In diesem wird zunächst das Token aus dem LocalStorage geladen.
+    Wenn dieses existiert, wird mittels des JwtHelper-Service das Token dekodiert
+    und in der Variabel decodedToken im AuthService gespeichert.
+
+-----------------------------------------
+ngx-bootstrap    
+-----------------------------------------
+Um das Einbinden von Bootstrap und eigenen Templates zu vereinfachen, wird ngx-bootstrap mittel npm installiert.
+    https://valor-software.com
+Durch diese Bibliothek kann außerdem auf jquery verzichtet werden, welches eine Grundlage für Bootstrap ist.
+    npm install -ngx-bootstrap --save
+Nach dem Installieren der Bibliothek muss die Datei app.module.ts hinsichtlich des Imports und
+der Verwendung angepasst werden. Der Import sollte dabei vor den eigenen Komponenten erfolgen.
+    import { BsDropdownModule } from 'ngx-bootstrap';  
+Anpassung des Import-Arrays
+    BsDropdownModule.forRoot()  
+
+DropdownMenu (ngx-bootstrap Komponente)
+Um ein Dropdown-Menü mittels dieser Bibliothek zu realisieren, sind drei Anpassungen
+im Bereich des HTML-Templates vorzunehmen.
+1.  Der Bereich auf den sich dieses Modul beziehen soll, ist hinsichtlich des ersten Tags
+    anzupassen. Diese beinhaltet alle nachfolgenden Tags.
+    Im öffnenden Tag ist das Attribut dropdown einzufügen.
+    Bei Bedarf können hier verschiedene Events des Dropdown-Menüs definiert werden.
+    Beispiel:
+    <span dropdown (onShown)="onShown()" (onHidden)="onHidden()" (isOpenChange)="isOpenChange()">
+        ...
+    </span>
+2.  Der Button/Link der für das Öffnen des Menüs zuständig ist, wird
+    mit dem Attribut dropdownToggle versehen.
+    Um das Standardverhalten des Anker-Tags zu deaktivieren kann außerdem
+    folgender Code eingetragen werden.
+    (click)="false"
+    Beispiel für ein Anker-Tag
+    <a href id="basic-link" dropdownToggle (click)="false">Link</a>
+3.  Das eigentliche Dropdown-Menü, welches eingeblendet werden soll,
+    wird dann um die Seiten-Direktive *dropdownMenu ergänzt.
+    Beispiel:
+    <ul id="basic-link-dropdown" *dropdownMenu class="dropdown-menu">...</ul>        
+
+-----------------------------------------
+Theme für Bootstrap
+-----------------------------------------
+Auf folgender Seite befinden sich kostenlose Bootstrap-Themes
+    https://bootswatch.com/
+Folgende NPM-Anweisung installiert ein entsprechendes Paket in dem
+alle Themes enthalten sind. Zu finden sind diese dann im Ordner node_modules/bootswatch
+    npm install bootswatch
+
+Im zentalen CSS-File (src/style.css)  der Applikation kann dann das gewünschte Theme durch
+das Einfügen einer neuen Import-Anweisung eingebunden werden.    
+Beispiel:
+    @import '../node_modules/bootswatch/dist/united/bootstrap.min.css';
+  
+
+  
+  
+
+    
+
+
 
 

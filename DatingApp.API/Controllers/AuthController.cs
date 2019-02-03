@@ -90,8 +90,8 @@ namespace DatingApp.API.Controllers
                 return Unauthorized();
 
             // Struktur des Token bestimmen
-            // - Eindeutige Id (entspricht dem Feld Id der Datenbanktabelle)
-            // - Name des Users
+            // - Eindeutige Id = Spalte Id der Tabelle User = Properie nameid des JSON-Objektes
+            // - Name des Users = Spalte Name der Tabelle User = Propertie unique_name des JSON-Objektes
             // Hierzu ist der Namespace System.Security.Claims zu imporierten
             var claims = new[]
             {

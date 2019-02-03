@@ -99,6 +99,9 @@ namespace DatingApp.API
         {
             // !!! In dieser Funktion ist auch die Reihenfolge von Bedeutung !!!
 
+            // Ausgabe von statischen Dateien
+            app.UseStaticFiles();
+
             // Über die Umgebungsvariabel env.IsDevelopment wird bestimmt, in welchem
             // Kontext die Applikation ausgeführt wird.
             // Die Einstellung hierzu wird in der Datei Properties/launchSettings.json
