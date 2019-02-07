@@ -4,6 +4,11 @@ import { NgModule } from '@angular/core';
 // Der Import aus der angular/http-Datei wird demnächst nicht mehr unterstützt
 import { HttpClientModule} from '@angular/common/http';
 import { FormsModule} from '@angular/forms';
+import { RouterModule } from '@angular/router';
+
+// Routing-Komponenten
+import { appRoutes } from './routes';
+import { AuthGuard } from './_guards/auth.guard';
 
 // Start-Komponente der Applikation
 import { AppComponent } from './app.component';
@@ -20,6 +25,11 @@ import { AuthService } from './_services/auth.service';
 import { NavComponent } from './nav/nav.component';
 import { HomeComponent } from './home/home.component';
 import { RegisterComponent } from './register/register.component';
+import { MemberListComponent } from './member-list/member-list.component';
+import { ListsComponent } from './lists/lists.component';
+import { MessagesComponent } from './messages/messages.component';
+
+
 
 
 //    providers   --> zu verwendende selbst erstellte Services
@@ -28,18 +38,23 @@ import { RegisterComponent } from './register/register.component';
       AppComponent,
       NavComponent,
       HomeComponent,
-      RegisterComponent
+      RegisterComponent,
+      MemberListComponent,
+      ListsComponent,
+      MessagesComponent
    ],
    imports: [
       BrowserModule,
       HttpClientModule,
       FormsModule,
-      BsDropdownModule.forRoot()
+      BsDropdownModule.forRoot(),
+      RouterModule.forRoot(appRoutes)
    ],
    providers: [
       AuthService,
       ErrorInterceptorProvider,
-      AlertifyService
+      AlertifyService,
+      AuthGuard
    ],
    bootstrap: [
       AppComponent

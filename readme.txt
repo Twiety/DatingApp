@@ -489,11 +489,85 @@ Beispiel:
     @import '../node_modules/bootswatch/dist/united/bootstrap.min.css';
   
 
-  
-  
+-----------------------------------------
+Angular Routes
+-----------------------------------------  
+Da es sich um eine Singe Page Application handelt, wird der Austausch der Seiten
+durch eine Logik von Angular durchgeführt. 
+Hierzu ist eine TS-Datei im Ordner app mit dem Namen routes.ts zu erstellen, die das Routing steuert.
+In dieser Datei ist zunächst der Namespace Routes auf @angular/router zu importieren.
+Anschließend wird eine Konstante vom Typ Routes definiert.
+Dieser wird dann in Form eines Arrays eine Liste von Rout-Objekten zugewiesen.
+Das Rout-Objekt besteht zumindest aus den Angaben des Rout-Namen und der aufzurufenden Komponente.
+Für jede aufgeführte Komponente muss wie gewöhnlich eine zugehörige Import-Anweisung in der Router-Datei erfolgen.
+Nach dem Auflisten aller relevanten Komponenten erfolgt auch eine Rout-Angabe, die Anwendung findet,
+wenn durch den User eine Route aufgerufen wird, die nicht definiert ist.
+Die Reihenfolge der Rout-Angaben ist grundsätzlich von Bedeutung, denn die erste Übereinstimmung
+der angegebenen Route führt zum Aufruf der definierten Komponente.
+Beispiel:
 
+export const appRoutes: Routes = [
+    {path: 'home', component: HomeComponent},
+    { path: '**', redirectTo: 'home', pathMatch: 'full'}
+]
+
+Als nächstes muss in app.module.ts das Imports-Array wie folgt erweitert werden.
+    RouterModule.forRoot(appRoutes)
+Hierfür werden die nachfolgenden zwei Import-Anweisungen benötigt:
+    import { RouterModule } from '@angular/router';
+    import { appRoutes } from './routes';
+
+Die Routing-Angaben können dann in einem A-Tag wie folgt verwendet werden.
+(Snippet a-routerlink zur schnelleren Eingabe verwenden)
+    <a [routerLink]="['/routePath']" routerLinkActive="router-link-active" >Dating-App</a>
+Die Angabe /routePath ist durch den Namen der gewünschten Route zu ersetzen.
+Das Attribut routerLinkActive führt zur Anwendung eines speziellen Stylesheets, wenn die Route ausgewählt wurde.
+Diese Angabe kann entweder gelöscht oder zu einem übergeordneten Tag verschoben werden.
+Damit der Austausch der Seite tatsächlich erfolgt muss abschließend noch eine Anpassung der app.component.html
+vorgenommen werden.
+Das bisher dort vorhandene Tag <app-home></app-home>, welches zur Anzeige Home-Komponente führte,
+ist nun durch folgendes Tag zu ersetzen. Dieses Tag berücksichtigt, dynamische die Auswahl
+der jeweiligen Komponente.
+    <router-outlet></router-outlet>
     
+Damit eine Komponente durch eigene Logik den Inhalt der Seite austauschen kann,
+ist es erforderlich die Routing-Objekt in die jeweilige Komponente mittels Übergabe
+an den Konstruktor zu injezieren.
+In der hiesigen Applikation passiert dies z.B. in der Navigations-Komponente.
 
+-----------------------------------------
+Route-Guards
+-----------------------------------------
+Seiten können vor einem nicht authentifierten Zugriff geschützt werden,
+indem eine Route-Guard eingerichtet wird.
+VS Code bietet an dieser Stelle leider kein entsprechendes Context-Menü zum
+Anlegen einer solchen Komponente an. Aus diesem Grund ist das Erstellen mittels
+Angular-CLI notwendig. Hierzu ist folgender Befehl im gewünschten Verzeichnis auszuführen:
+ng g guard nameofgurad --spec=false
+    --> Parameter --spec=false verhindert das Erstellen eines zugehörigen Testfiles.
 
+In der Guard-Komponente wird definiert, was zu prüfen ist und was passieren soll,
+wenn die Prüfung zu einem Fehler führte.
+Im Rahmen dieser Applikation wird z.B. geprüft, ob der User eingeloggt ist,
+sollte das nicht der Fall sein, so wird mittels alterify eine Fehlermeldung ausgegeben
+und es erfolgt eine Umlzeitung zur Startseite.
 
+Die Guard-Komponente muss dann als nächste im app.module eingebunden werden.
+Hierzu wird das Providers-Array um einen entsprechenden Eintrag ergänzt.
+Wie immer muss auch hierfür eine Import-Anweisung aufgenommen werden, die auf
+die zuvor erstelle Guard-Komponente verweist.
+Beispiel:
+    import { AuthGuard } from './_guards/auth.guard';
 
+Als nächstes muss dann die Router-Komponente (routes.ts) so angepasst werden,
+dass sie die Guard-Komponente zum Prüfen der aufgerufenen Route verwendet.
+Beispiel:
+    { path: 'members', component: MemberListComponent, canActivate: [AuthGuard]},
+
+Jede Route kann entweder einzeln oder mittels einer Multiple-Route definiert werden.
+Bei einer Multiple-Route wird die anzuwendende Klasse nur einmal vorgegeben.
+Die Child-Element enthalten dann die einzelnen Routen, wenden aber die im Parent-Element
+angegebene Klasse zum Prüfen der Zugriffsrecht an.
+Im Parent-Element kann ergänzend eine Pfad-Angabe definiert werden, die beim Prüfen
+der Child-Elemente als Prefix der Pfadangabe verwendet wird. Im Standardfall ist der Pfad
+des Parent-Elementes daher eher nur ein leerer String.

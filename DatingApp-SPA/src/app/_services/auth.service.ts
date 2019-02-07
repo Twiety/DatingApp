@@ -55,7 +55,8 @@ login(model: any) {
         const user = response;
         if (user) {
           localStorage.setItem('token', user.token);
-          // Dekodiertes Token in Form eines JSON-Objektes
+          // Das vom Server empfangene Token wird mittels jwtHelper dekodiert
+          // und als JSON-Objekt zurückgegeben.
           // Folgende Properties sind im Token der hiesigen Applikation enthalten:
           // nameid = numerische ID des Users
           // unique_name = Name des Users
