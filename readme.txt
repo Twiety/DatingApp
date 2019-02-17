@@ -51,6 +51,10 @@ Um das Repository zu initialisieren ist wie folgt vorzugehen:
 
 
 1. DatingApp.Api (Server-Applikation)
+
+    ------------------------------------------
+    Anlegen und starten der Server-Applikation
+    ------------------------------------------
     Hierbei handelt es um eine serverseitige Applikation,
     die für die Client-Applikation eine API zur Verfügung stellt.
     Diese Applikation wurde mittels des folgenden Befehls erstellt:
@@ -62,8 +66,10 @@ Um das Repository zu initialisieren ist wie folgt vorzugehen:
     Das Ausführen der Applikation erfolgt innerhalb des Ordners
     DatingApp.API mit folgendem Befehl:
     dotnet run (oder) dotnet watch run
-    
+
+    ------------------------------------------    
     CodeFirst-Modell
+    ------------------------------------------    
     Zum Erstellen der Datenbank wird das Prinzip "CodeFirst-Modell" angewendet.
     Nachdem eine Klasse erstellt wurde, die durch eine Tabelle in der Datenbank abzubilden ist,
     wird wie folgt vorgegangen.
@@ -73,7 +79,9 @@ Um das Repository zu initialisieren ist wie folgt vorzugehen:
     - Anwenden des Migrationsskriptes mit folgendem Befehl
         dotnet ef database update
 
+    ------------------------------------------
     Repository-Pattern
+    ------------------------------------------    
     Der Zugriff auf die User-Dasten erfolgt mittels des Repository-Pattern.
     Ein Controller der auf User-Daten zugreifen soll, wird somit von der Logik zum Zugriff
     auf die EF-Daten entkoppelt.
@@ -85,8 +93,10 @@ Um das Repository zu initialisieren ist wie folgt vorzugehen:
     genannte Schnittstelle.
     In der StartUp-Klasse der Server-Applikation wird dann die konkrete Klasse
     unter Angabe der Schnittstelle als Service registriert. (siehe Funktion ConfigureServices)
-    
+
+    ------------------------------------------    
     Controller
+    ------------------------------------------
     Im Verzeichnis Controllers werden C#-Klassen angelegt, deren NameDerMigration
     (per Definition) immer auf Controller endet. Die Klassen und deren Funktionen werden mit speziellen
     Attributen aus dem Namespace Microsoft.AspNetCore.Mvc ausgezeichnet.
@@ -104,7 +114,9 @@ Um das Repository zu initialisieren ist wie folgt vorzugehen:
     auf der Serverseite bekannt sein.
     Aus diesem Grund werden sogenannte DTOs erstellt, 
 
+    ------------------------------------------
     Datenvalidierung
+    ------------------------------------------    
     Die KLassen der Daten-Objekte (Entitäten) können mit Attributen annotiert werden,
     die eine automatische Validierung der Angaben ermöglichen.
     Voraussetzung ist das der Namespace System.Component.DataAnnotations importier wird.
@@ -112,7 +124,9 @@ Um das Repository zu initialisieren ist wie folgt vorzugehen:
     [Required]
     [StringLength(8, MinimumLength = 4, ErrorMessage = "Message")]
 
+    ------------------------------------------
     Authentifizierung mittels Token
+    ------------------------------------------    
     Nach einem erfolgreichen Login wird dem Browser JWT-Token zugeschickt.
     Dieses wird dann in allen nachfolgenden Requests verwendet, um den User
     zu authentifizieren. Der Server prüft nur noch das Token, greift aber nicht
@@ -148,7 +162,9 @@ Um das Repository zu initialisieren ist wie folgt vorzugehen:
     2) In der Ausgabe-Pipeline (siehe Funktion Configure) ist der Authentifizierungs-Service einzufügen.
        Dabei muss dieser auf jeden Fall, vor der MVC-Funktion aufgeführt werden.
 
+    ------------------------------------------
     Abfangen von Fehlern
+    ------------------------------------------
     Fehler können lokal durch Try-Catch abgefangen und verarbeitet werden.
     Durch die Defintion eines Exception-Handlers in der Datei start.cs kann ein globales Abfangen von Fehlern erfolgen.
     Durch die Berücksichtigung des Ausführungs-Kontextes der Applikation erfolgt die Ausgabe eines vollständigen
@@ -163,6 +179,96 @@ Um das Repository zu initialisieren ist wie folgt vorzugehen:
     Auch in der Client-App können Fehler gobal abgefangen werden, 
     siehe hierzu Kapitel "Angular - Globales Abfangen von Fehlern"
 
+    ------------------------------------------
+    CLI Entity-Framework
+    ------------------------------------------
+    dotnet ef migrations add NameOfMigration
+    --> Erstellt ein neues Migrationsscript 
+
+    donet ef database update
+    --> Anwendung des/der letzten Migrationsscripte(s),
+        welche noch nicht gegenüber der Datenbank ausgeführt wurden.
+
+    dotnet ef database update NameOfMigration
+    --> Anwendung des angegebenen Migrationsscriptes.
+        Durch die Angabe des Scriptes kann auch zu
+        einem älteren Versionsstand zurück gegangen werden.
+        Achtung: Von SQLite werden nicht alle Befehle unterstützt,
+                 die notwendig wären für ein DownGrade der Datenbank.
+
+    dotnet ef migrations list
+    --> Auflistung der vorhandenen Migrationsscripte
+        Welche Scripte auf die Datenbank angewendet wurden, sieht man nur in der Datenbank
+
+    dotnet ef migrations remove
+    --> Löscht das letzte Migrationsscript, wenn dieses noch nicht
+        angewendet wurde. Andernfalls wird ein Fehler ausgegeben.
+        
+
+    dotnet ef database drop
+    --> LÖscht die Datenbank
+
+    ------------------------------------------
+    Zufallsdaten für Datenbank
+    ------------------------------------------
+    Auf folgender Webseite können Zufallsdaten produziert werden.
+    https://www.json-generator.com
+    Das Script zum Erstellen der Daten kann an die eigenen Anforderungen angepasst werden.
+    Nach dem Erstellen werden die Daten in die Zwischenablage kopiert und in
+    eine JSON-Datei eingefügt. (siehe Datei Data\UserSeedData.json)
+    Außerdem wird eine Klasse mit dem Namen Seed angelegt, die diese JSON-Datei einliest
+    und für jedes Element ein Objekt vom Typ User angelegt und dem Datenkontext hinzufügt.
+    Nach dem Anlegen aller Objekt wird abschließend der Befehl _context.SaveChanges() ausgeführt.
+    Dieser Befehl führt dann zum Speichern der Daten in der Datenbank.
+    Der Aufruf dieser Klasse erfolgt durch eine Anpassung der Start.cs-Datei.
+    Zunächst wird dort ein entsprechender Service definiert, der dann
+    der Configure-Methode injeziert wird. Dort wird dann die Funktion zum Anlegen der Daten
+    innerhal der Seed-Klasse aufgerufen.
+    Nach dem Anlegen der Daten wird diese Funktion wieder auskommentiert,
+    andernfalls würde jeder Start der Applikation zum erneuten Anlegen der Daten führen.
+
+    ------------------------------------------
+    Auto-Mapper
+    ------------------------------------------
+    Zum Installieren wie folgt in VS-Code vorgehen:
+    CMD+SHIFT+P NuGet
+        Suche nach AutoMapper  
+        Auswahl von AutoMapper.Extensions.Microsoft.DependencyInjection
+
+    Wie gewöhnlich muss auch dieser Service innerhalb der Start-Klasse der Applikation (start.cs)
+    konfiguriert werden.
+        services.AddAutoMapper();
+
+    Das Tool wird wie folgt verwendet:
+    1)  Zunächst ist mittels des Konstruktors des Controllers 
+        ein Mapping-Objekt vom Typ der Schnittstelle IMapper zu injezieren und in einer
+        Variabel des Controllers zu speichern.
+
+    2) In der Controller-Funktion zur Ausgabe eines Objektes erfolgt dann mittels
+       des Mapping-Objektes die Zuweisung der Eigenschaften des Source-Objektes
+       zu den Eigenschaften des Destination-Objektes wie folgt:
+
+        Mapping bei einem einzelnen Objekt
+            var DestinationObject = _mapper.Map<DestinationClass>(SourceObject);
+
+        Mapping bei einer Liste vom Typ IEnumerable von Objekten
+            var DestinationList = _mapper.Map<IEnumerable<DestinationClass>>(SourceListObject);
+
+    3) Es ist eine Klasse anzulegen, die von AutoMapper.Profile erbt.
+       Im Konstruktor dieser Klasse ist dann mittels der Befehls CreateMap anzugeben. welche Klasse
+       als Quelle und welche als Ziel für das Transferieren der Daten verwendet werden soll.
+            createMap<SourceClass,DestinationClass>();
+        Mit Hilfe dieser einfachen Anweisung ist AutoMapper bereits in der Lage basierend
+        auf den Namen und der Typen der Properties ein Tranferieren der Daten vorzunehmen.
+        Folgende Anweisung wird verwendet, um ein manuelles Mapping zu definieren.
+        Die Anweisung definiert somit zuerst die Ziel-Propertie, um dann anschließend
+        eine Aktion zu bestimmen, die aus der Quell-Property die Daten extrahiert.
+        Hierbei werden LINQ-Anweisungen verwendet um z.B. aus einer zugeordneten 1:n Entität das
+        gewünschte Objekt zu selektieren.
+            createMap<SourceClass,DestinationClass>()
+                .ForMember(dest => dest.PropName, opt => {
+                    opt.MapFrom(src => src.PropCollection.FirstOrDefault(p => p.PropName == Condition).PropName)
+                })
 
 
 

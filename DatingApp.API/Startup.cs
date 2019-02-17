@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
+using AutoMapper;
 using DatingApp.API.Data;
 using DatingApp.API.Helpers;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -63,7 +64,12 @@ namespace DatingApp.API
             services.AddDbContext<DataContext>(x => x.UseSqlite(Configuration.GetConnectionString("DefaultConnection")));
 
             // MVC-Funktionalität
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+            // Mittels der JSON-Einstellung wird eine Loop, der sich durch ein gegenseitiges Referenzieren von Objekten
+            // in Entity Framework ergibt, ignoriert.
+            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1)
+                    .AddJsonOptions(opt => {
+                        opt.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
+                    });
 
             // Anpassung der Zugriffsregeln,
             // denn Client- und Server-Applikation werden von verschiedenen Webdiensten
@@ -71,14 +77,23 @@ namespace DatingApp.API
             // Somit kommt es zu einem Cross-Domain-Zugriff der per Standard nicht erlaubt ist.
             services.AddCors();
 
+            // Tool um ein automatisches Mapping der Properties zwischen zwei Klassen zu erreichen.
+            // Das Abbilden der Eigenschaften zwischen den Modell-Klassen und den DTO-Klassen wird
+            // somit automatisiert.
+            services.AddAutoMapper();
+
+            // Hinzufügen der Klasse Seed, um bei Bedarf Daten generieren zu lassen
+            services.AddTransient<Seed>();
+
             // Arten der Service-Injezierung
             // services.AddSingleton --> Fügt eine einzige Instanz des Objektes zur Applikation hinzu. Dieses Objekt ist für alle Http-Requests identisch
             // services.AddTransient --> Fügt eine Instanz des Objektes bei jedem Seitenaufruf hinzu
             // services.AddScoped --> Ähnlich wie Singleton, aber ???
             // services.AddSession --> Fügt eine Instanz im Rahmen einer Session der Applikation hinzu
 
-            // Registriert die konkrete AuthRepository-Klasse unter Angabe der zugehörigen Schnittstelle als Service
+            // Registriert die konkreten Repository-Klassen unter Angabe der zugehörigen Schnittstelle als Service
             services.AddScoped<IAuthRepository,AuthRepository>();
+            services.AddScoped<IDatingRepository, DatingRepository>();
 
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                     .AddJwtBearer(options => {
@@ -95,7 +110,7 @@ namespace DatingApp.API
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, Seed seeder)
         {
             // !!! In dieser Funktion ist auch die Reihenfolge von Bedeutung !!!
 
@@ -133,6 +148,9 @@ namespace DatingApp.API
             }
 
             // app.UseHttpsRedirection();   --> Zwangsweise Umleitung zur Https-Seite
+
+            // User-Daten generieren (wird nur bei leerer Datenbank benötigt), andernfalls auskommentiert!
+            //seeder.SeedUsers();
 
             // Anpassung der Zugriffsregeln, um einen Cross-Domain-Zugriff zu erlauben.
             app.UseCors(x => x.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
