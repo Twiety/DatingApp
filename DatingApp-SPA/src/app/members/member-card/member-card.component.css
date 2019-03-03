@@ -1,0 +1,51 @@
+.card:hover img {
+    transform: scale(1.2, 1.2);
+    transition-duration: 500ms;
+    transition-timing-function:  ease-out;
+    opacity: 0.7;
+}
+
+.card img {
+    transform: scale(1.0, 1.0);
+    transition-duration: 500ms;
+    transition-timing-function:  ease-out;    
+}
+
+/*  overflow: hidden 
+    --> Mit dieser Angabe wird der Inhalt des Bildes nur gezoomt. 
+        Die Abmessungen des Bildes werden aber beibehalten. 
+    position: relative
+    --> dient der Positionierung der Buttons in Relation zum Bild
+*/
+.card-img-wrapper {
+    overflow: hidden;
+    position: relative;
+}
+
+/* Die Buttons sind innerhalb des Wrapper-Divs enthalten.
+    Durch nachfolgende Angaben sind werden sie im Bereich des Fotos
+    positioniert. Durch die Opacity-Angabe sind sie allerdings zunächst unsichtbar.
+    Die Verwendung der Style-Angabe visibility ist hier nicht sinnvoll,
+    da durch die gewünschte Animation (siehe CSS-Class .animate) das Ein-
+    und Ausblenden nicht so "schön" funktioniert.
+ */
+.member-icons {
+    position: absolute;
+    bottom: -30%;
+    left: 0;
+    right: 0;
+    margin-right: auto;
+    margin-left: auto;
+    opacity: 0;
+    /* visibility: hidden; */
+}
+
+.card-img-wrapper:hover .member-icons {
+    bottom: 0;
+    opacity: 1;
+    /* visibility: visible; */
+}
+
+.animate {
+    transition: all 0.3s ease-in-out;
+}

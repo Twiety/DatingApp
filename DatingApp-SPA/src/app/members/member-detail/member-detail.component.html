@@ -1,0 +1,69 @@
+<!-- Es empfiehlt sich für den Abruf der Objektdaten 
+  diesem ein ? (Save-Navigation-Operator) anzuhängen.
+Hierdurch akzeptiert die Komponente auch NULL-Werte.
+Dadurch dass die Daten mittels Webservice nachgeladen werden müssen,
+stehen der Komponente beim Aufruf die Daten noch nicht zur Verfügung. 
+Eine alternative Lösung dieses Problems besteht in der Definition eines Route-Resolvers
+-->
+
+<div class="container mt-4">
+  <div class="row">
+    <h1>{{user.knownAs}}'s Profile</h1>
+  </div>
+  <div class="row">
+    <div class="col-sm-4">
+      <div class="card">
+        <img class="card-img-top img-thumbnail" src="{{user?.photoUrl}}" alt="{{user?.knownAs}}">
+        <div class="card-body">
+          <div>
+            <strong>Location:</strong>
+            <p>{{user.city}}, {{user.country}}</p>
+          </div>
+          <div>
+              <strong>Age:</strong>
+              <p>{{user.age}}</p>
+            </div>          
+          <div>
+              <strong>Last Active:</strong>
+              <p>{{user.lastActive}}</p>
+            </div>          
+          <div>
+            <strong>Member since:</strong>
+            <p>{{user.created}}</p>
+          </div>
+        </div>
+        <div class="card-footer">
+          <div class="btn-group d-flex">
+            <button class="btn btn-primary w-100">Like</button>
+            <button class="btn btn-success w-100">Message</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-sm-8">
+      <!-- Zur Anzeige des Karteireiters wird die ext. Library Ngx-Bootstrap verwendet
+          Diese benötigt zunächst einen Div-Container, dem die Style-Klasse tab-pannel zugeordnet wird.
+      -->
+      <div class="tab-pannnel">
+        <tabset class="member-tabset">
+          <tab heading="About {{user.knownAs}}">
+            <h4>Description</h4>
+            <p>{{user.introduction}}</p>
+            <h4>Looking for</h4>
+            <p>{{user.lookingFor}}</p>
+          </tab>
+          <tab heading="Interests">
+            <h4>Interests</h4>
+            <p>{{user.interest}}</p>
+          </tab>
+          <tab heading="Photos">
+            <ngx-gallery [options]="galleryOptions" [images]="galleryImages"></ngx-gallery>
+          </tab>
+          <tab heading="Messages">
+            <p>Messages</p>
+          </tab>
+        </tabset>
+      </div>
+    </div>          
+  </div>
+</div>

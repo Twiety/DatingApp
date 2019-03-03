@@ -1,16 +1,23 @@
+import { Routes } from '@angular/router';
+import { AuthGuard } from './_guards/auth.guard';
+import { HomeComponent } from './home/home.component';
+import { MemberListComponent } from './members/member-list/member-list.component';
+import { MemberDetailComponent } from './members/member-detail/member-detail.component';
 import { ListsComponent } from './lists/lists.component';
 import { MessagesComponent } from './messages/messages.component';
-import { MemberListComponent } from './member-list/member-list.component';
-import { HomeComponent } from './home/home.component';
-import {Routes} from '@angular/router';
-import { AuthGuard } from './_guards/auth.guard';
 
-
-
+import { MemberDetailResolver } from './_resolvers/member-detail.resolver';
+import { MemberListResolver } from './_resolvers/member-list.resolver';
 // Definition der Routen
 // Die Reihenfolge der zu prüfenden Pfade ist von Relevanz.
 // Ein Pfad mit Wildcards (**) muss daher als letztes aufgefühgrt werden.
-// path = Name des Pfads/URL
+// Aufbau einer Route:
+// path = Name des Pfads (URL)
+//          Enthält die Url neben dem Pfad auch Variabeln, um z.B. eine ID
+//          zu übergeben, so ist diese Variabel namentlich mit dem Prefix : anzugeben
+//          Der Typ einer solchen Variabel ist grundsätzlich immer ein String, auch wenn
+//          die Funktionen, die diesen Wert nutzen, eine Zahl erwarten.
+//          Beispiel:   members/:id
 // component = Name der aufzurufenden Komponente
 // canActivate = Name der Klasse, die eine Logik enthält, die den Zugriff prüft
 // redirect = Pfad zu dem umgeleitet werden soll
@@ -33,7 +40,8 @@ export const appRoutes: Routes = [
         runGuardsAndResolvers: 'always',
         canActivate: [AuthGuard],
         children: [
-            { path: 'members', component: MemberListComponent},
+            { path: 'members', component: MemberListComponent, resolve: {users: MemberListResolver}},
+            { path: 'members/:id', component: MemberDetailComponent, resolve: {user: MemberDetailResolver }},
             { path: 'messages', component: MessagesComponent},
             { path: 'lists', component: ListsComponent}
         ]

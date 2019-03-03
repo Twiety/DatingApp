@@ -440,7 +440,7 @@ Um das Repository zu initialisieren ist wie folgt vorzugehen:
     Angular - Kommunikation zwischen Komponenten
     1) Parent zu Child
         Um einen Datenaustausch von einer Parent- zu einer Child-Komponente zu ermöglichen,
-        muus in der Child-Komponente eine Variabel mit dem @Input-Dekorator versehen werden.
+        muss in der Child-Komponente eine Variabel mit dem @Input-Dekorator versehen werden.
         Zur Verwendung dieses Dekorator muss die Import-Anweisung in TS-Datei der Child-Komponente
         angepasst werden. 
             import { Component, OnInit, Input } from '@angular/core';
@@ -451,7 +451,8 @@ Um das Repository zu initialisieren ist wie folgt vorzugehen:
         Beispiel:
         <app-childcomp [valuesFromParent]="values"></app-childcomp>
         Die Parent-Komponente wird somit den Inhalt von values mittels einer eigenen Logik
-        laden und der Variabel in Child-Komponente zuweisen.
+        laden und der Variabel in der Child-Komponente zuweisen.
+        (siehe member-list- und member-card-component)
     
     2) Child zu Parent
         Hierzu wird zunächst in der Child-Komponente eine Variable mit dem Dekorator @Output versehen.
@@ -480,6 +481,18 @@ entsprechende Header-Informationen zur Ausgabe der eigentlichen Fehlermeldung ve
 Danach ist ein Provider zu erstellen (Objekt-Variabel), der auf die zuvor erstelte Klasse verweist.
 Dieser Provider ist dann in app.modul.ts zu registrieren. Hierzu wird der neue Provider namentlich
 im Provider-Array eingefügt. Außerdem ist eine entsprechende Import-Anweisung in app.modul.ts einzufügen.
+
+
+-----------------------------------------
+Angular - Umgebungsvariabeln
+-----------------------------------------
+Im Ordner src/environment befinden sich zwei Dateien, in den Variabeln definiert werden können,
+die sich hinsichtlich ihres Einsatzes in einer Test- oder Produktionsumbegung unterscheiden.
+In diesen Dateien ist ein JSON-Objekt definiert, das nach Belieben erweitert werden kann.
+Um Variabeln aus diesen Dateneien nutzen zu können, ist es in der entsprechenden Komponente notwendig,
+die folgende Import-Anweisung aufzunehmen:
+    import { environment } from './../../environments/environment';
+
 
 -----------------------------------------
 Alertify
@@ -544,6 +557,20 @@ Hierbei gibt es allerdings eine Reihe von Problemen.
     Wenn dieses existiert, wird mittels des JwtHelper-Service das Token dekodiert
     und in der Variabel decodedToken im AuthService gespeichert.
 
+Die Library ist auch in der Lage mittels eines HttpInterceptors das Token 
+automatisch einem Http-Client-Request anzufügen.   
+Hierzu sind folgdende Schritte zu tun.
+1. In app.module.ts muss das JwtModule importiert werden
+2. In app.module.ts ist eine Funktion anzulegen, die das Token aus dem LocalStorage ausliest
+   und zurückgibt.
+3. Im Bereich des Import-Arrays ist das JwtModule zu konfigurieren.
+    Hier sind drei Angaben zu machen:
+        1) wie heißt die Funktion die das Token aus dem LocalStorage ausliest
+        2) In einem Array ist eine Whitelist zu definieren
+        3) In einem Array ist eine Blacklist zu definieren
+
+
+
 -----------------------------------------
 ngx-bootstrap    
 -----------------------------------------
@@ -594,6 +621,18 @@ das Einfügen einer neuen Import-Anweisung eingebunden werden.
 Beispiel:
     @import '../node_modules/bootswatch/dist/united/bootstrap.min.css';
   
+-----------------------------------------
+Bootstrap Style-Angaben
+-----------------------------------------
+container   --> Container für die Aufnahme des GridLayouts
+col-lg-x    --> Anzahl der Spalten bei einem großen Screen, x = Anzahl Spalten (1 bis 12)
+col-md-x    --> Anzahl der Spalten bei einem mittleren Screen, x = Anzahl Spalten (1 bis 12)
+col-sm-x    --> Anzahl der Spalten bei kleinerm Screen
+
+mt-x        --> margintop: x pixel
+text-center --> Textausrichtung zentriert
+text-left   --> Textausrichtung links
+text-right   --> Textausrichtung rechts
 
 -----------------------------------------
 Angular Routes
@@ -626,6 +665,10 @@ Hierfür werden die nachfolgenden zwei Import-Anweisungen benötigt:
 Die Routing-Angaben können dann in einem A-Tag wie folgt verwendet werden.
 (Snippet a-routerlink zur schnelleren Eingabe verwenden)
     <a [routerLink]="['/routePath']" routerLinkActive="router-link-active" >Dating-App</a>
+Soll zusätzlich beim Aufruf der Route ein Parameter angehangen werden, so ergibt sich folgende Syntax,
+in der nach der Route eine beliebige Variabel angefügt wird.
+    <a [routerLink]="['/routePath/', var]" routerLinkActive="router-link-active" >Dating-App</a>
+
 Die Angabe /routePath ist durch den Namen der gewünschten Route zu ersetzen.
 Das Attribut routerLinkActive führt zur Anwendung eines speziellen Stylesheets, wenn die Route ausgewählt wurde.
 Diese Angabe kann entweder gelöscht oder zu einem übergeordneten Tag verschoben werden.
@@ -677,3 +720,140 @@ angegebene Klasse zum Prüfen der Zugriffsrecht an.
 Im Parent-Element kann ergänzend eine Pfad-Angabe definiert werden, die beim Prüfen
 der Child-Elemente als Prefix der Pfadangabe verwendet wird. Im Standardfall ist der Pfad
 des Parent-Elementes daher eher nur ein leerer String.
+
+-----------------------------------------
+TypeScript: 
+-----------------------------------------
+Um typsichere Eigenschaften eines Objektes zu erhalten, 
+werden in TypeScript Interfaces definiert, die von den Objekten zu implementieren sind.
+Dies hat folgende Vorteile:
+- Der TypeScript-Compiler ist in der Lage den Datentyp zu prüfen
+- Intellisense in der IDE
+- Autovervollständigung in der IDE
+Das Anlegen eines Interfaces innerhalb der Client-Applikation erfolgt mittels Context-Menü.
+(Generate Interface)
+Optionale Angaben müssen immer nach den Pflichtangaben aufgeführt werden.
+Ist eine Property vom Typ eines anderen Interfaces, so ist dieses Interface
+mittels Import-Anweisung zu importieren.
+
+Ein Interface-Definition innerhalb von TypeScript sieht wie folgt aus
+    export interface IName {
+        prop1:  number;         // numerische Eigenschaft
+        prop2:  string;
+        prop3:  Date;
+        prop4:  boolean;
+        prop5?: string[];       // Optionale Eigenschaft vom Typ String-Array
+    }
+
+
+
+-----------------------------------------
+- Angular Observables
+-----------------------------------------
+Ein Observable wird im Rahmen eines asychronen Aufrufs als Funktionsergebnis zurückgegeben.
+Das Observable beinhaltet seinerseits generische Objekte.
+Allgemeine Observable-Definition:
+getObservable() {
+    return this.http.get(Url);
+}
+
+Die Definition eines Observable zum Ausführen eines API-Requests unter Verwendung einer 
+generischen Klassen-Definition sieht wie folgt aus:
+    getObservable(): Observable<DataTypeName> {
+        return this.http.get<DataTypeName>(Url);
+    }
+
+Nachfolgende Funktion verwendet zusätzlich bei der Abfrage eine HttpOption
+um das Authentifizieruns-Token an den Server zu senden.
+  getObservable(): Observable<DataTypeName> {
+    return this.http.get<DataTypeName>(Url, httpOptions);
+  }    
+
+httpOptions muss vorher wie folgt definiert werden.
+Achtung: Das Leerzeichen zwischen Bearer und dem nachfolgendem Token muss vorhanden sein!!!
+const httpOptions = {
+  headers: new HttpHeaders({
+    'Authorization': 'Bearer ' + localStorage.getItem('token')
+  })
+};  
+
+Die Verwendung eines wie oben definierten Observable (im Rahmen eines Services) sieht wie folgt aus:
+1. Der Service muss im Konstruktor der Komponente injeziert werden
+2. Es wird innerhalb der Komponente eine Funktion erstellt, die diesen Service nutzt.
+        loadData() {
+            this.serviceName.getObservable().subscribe((object: DataTypeName) => {
+                this.object = object;
+            }, error => {
+                ...
+            })
+        }
+
+-----------------------------------------
+- Route-Resolver
+-----------------------------------------
+Ohne die Verwendung eines Rout-Resolvers besteht das Problem,
+dass beim Aktivieren einer Route (also Aufruf einer Komponente), 
+nicht sofort die Daten zur Verfügung stehen, die angezeigt werden sollen.
+Es kommt somit zu einer Angular-Fehlermeldung.
+Dies beruht auf der Tatsache, dass die Daten im Gegensatz zur Komponente selbst mittels Webrequest 
+noch nachgeladen werden. 
+
+Zur Vermeidung dieses Fehlers stehen zwei Möglichkeiten zur Verfügung.
+1)  Die Referenzierung der Properties eines Objektes werden mit dem Save-Navigation-Property versehen.
+    An den Namen des Objektes wird ein ? angehangen. Hiermit wird ein NULL-Wert des Objektes akzeptiert.
+    (Beispiel:      user?.name)
+
+2) Es wird ein Route-Resolver verwendet.
+    Hierzu wird zunächst ein eigener Ordner angelegt in dem dann eine Klasse angelegt wird,
+    die die generische Resolve-Klasse unter Berücksichtigung der relevanten Datenklasse implementiert.
+    Durch die Implementierung der Resolver-Klasse muss eine Funktion mit dem Namen resolve angelegt werden,
+    die als Parameter die aktivierte Route entgegennimmt und als Ergebnis eine Observable zurückgibt.
+    Ein Subscribe des Observables erfolgt hier nicht. Hier erfolgt nur eine Auswertung des Fehlerfalles
+    mittels der Syntax von rxjs.
+    Beispiel:
+        resolve(route: ActivatedRouteSnapshot): Observable<DataClassName> {
+            return this.dataclassService.getData(route.params['id']).pipe(
+                catchError(error => {
+                    this.alertify.error('Problem retrieving data');
+                    this.router.navigate(['/members']);
+                    return of(null);
+                })
+            );
+        }
+    
+    Die selbst definierte Resolver-Klasse ist dann in app.modul.ts im Provider-Array anzugeben.
+    Wie immmer bedarf es dann einer weiteren Import-Anweisung in app.module.ts
+    
+    Als nächstes muss in der betreffenden Komponente die Funktion ngOnInit geändert werden.
+    Statt dem bisherigen direkten Aufruf einer Funktion zum Laden der benötigten Daten, erfolgt nun
+    ein Subscribe zum Empfangen des Observables des ActiveRoute-Objektes, welches im Konstruktor der Komponente injeziert wurde.
+    Diese Funktion gestaltet sich wie folgt:
+        this.route.data.subscribe(data => {
+            this.dataclassName = data['dataclassName'];
+        });
+
+
+    Abschließend ist im router-Modul die Verwendung des Resolvers anzugeben (siehe routes.ts)
+    Die betreffende Route wird um eine dritte Angabe erweitert. Diese zeigt an, dass eine Resolve-Methode anzuwenden ist.
+    Der Typ der Variabel entspricht dem Namen der zuvor angelegten Resolver-Klasse.
+             ...  , resolve: {dataclassName: DataClassResolver }
+
+-----------------------------------------
+- Ngx-Gallery
+-----------------------------------------
+Zur Darstellung der Images im Rahmen einer Gallerie, wird die externe Bibliothek Ngx-Gallery verwendet.
+Diese wird zunächst mittels npm installiert.
+    npm install ngx-gallery --save
+
+In app.module.ts diese Bibliothek wie immer im Bereich imports und einer zugehörigen Import-Anweisung zu registrieren.
+Die Anwendung erfolgt dann innerhalb der gewünschten Komponente, mittels des folgenden Schritte:
+Definition einer Variabel vom Typ NgxGalleryOptions[] zur Aufnahme der Konfigurationsdaten
+Definition einer Variabel vom Typ NgxGalleryImage[] zur Aufnahme der Images
+Anpassung der Funktion ngOnInit, in der zuvor definierten Variabel gefüllt werden.
+Das Array der Images wird hierbei durch eine Funktion befüllt, die das Datenobjekt der Komponente nutzt.
+In der Html-Seite der Komponente wird folgendes Tag eingefügt.
+
+    <ngx-gallery [options]="galleryOptions" [images]="galleryImages"></ngx-gallery>
+
+
+
