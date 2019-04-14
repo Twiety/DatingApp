@@ -15,7 +15,7 @@ export interface User {
     // Ab hier werden nur noch optionale Properties aufgeführt.
     // die mittels ? gekennzeichnet werden.
     // Achtung: Optional Parameter müssen IMMER nach den Pflichtangaben erfolgen.
-    interest?: string;
+    interests?: string;
     introduction?: string;
     lookingFor?: string;
     photos?: Photo[];

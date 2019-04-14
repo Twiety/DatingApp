@@ -110,9 +110,10 @@ namespace DatingApp.API
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, Seed seeder)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, Seed seeder, IApplicationLifetime applicationLifetime)
         {
             // !!! In dieser Funktion ist auch die Reihenfolge von Bedeutung !!!
+            applicationLifetime.ApplicationStopping.Register(OnShutDown);
 
             // Ausgabe von statischen Dateien
             app.UseStaticFiles();
@@ -160,6 +161,14 @@ namespace DatingApp.API
 
             // Ausgabe der API-Controller
             app.UseMvc();
+        }
+
+        private void OnShutDown()
+        {
+            System.Diagnostics.Debug.WriteLine("Debug Shutdown application");
+            System.Diagnostics.Trace.WriteLine("Trace Shutdown application");
+            // System.Diagnostics.Trace.Flush();
+            // System.Threading.Thread.Sleep(1000);
         }
     }
 }

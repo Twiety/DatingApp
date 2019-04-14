@@ -1,4 +1,6 @@
+using System;
 using System.Collections.Generic;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using AutoMapper;
 using DatingApp.API.Data;
@@ -42,6 +44,30 @@ namespace DatingApp.API.Controllers
             var userToReturn = _mapper.Map<UserForDetailedDto>(user);
 
             return Ok(userToReturn);
+        }
+
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateUser(int id, UserForUpdateDto userForUpdateDto)
+        {
+            // Kontrollieren, ob die angegebene Id zum aktuell eingeloggten User gehört
+            // Hierzu wird das Token geladen und das Attribut NameIdentifier verwendet.
+            if(id != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
+                return Unauthorized();
+
+            // Datensatz mit Hilfe der Repository-Klasse laden            
+            var userFromRepo = await _repo.GetUser(id);
+
+            // Mit Hilfe von AutoMapper werden die Attribut des Dto-Objektes (userForUpdateDto)
+            // auf die Attribute des eigentlichen User-Objektes übertragen
+            _mapper.Map(userForUpdateDto, userFromRepo);
+
+            // Änderung speichern.
+            // Beim erfolgreichen Speichern wird kein Conten zurückgegeben.
+            if (await _repo.SaveAll())
+                return NoContent();
+                
+            // Beim Speichern ist ein Fehler aufgetreten
+            throw new Exception($"Updating user {id} failed on save");
         }
     }
 }

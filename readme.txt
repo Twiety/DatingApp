@@ -180,6 +180,17 @@ Um das Repository zu initialisieren ist wie folgt vorzugehen:
     siehe hierzu Kapitel "Angular - Globales Abfangen von Fehlern"
 
     ------------------------------------------
+    Debuggen einer Anwendung in VSCode (siehe Kapilet 3/30)
+    ------------------------------------------
+    Vorbereitung
+        - Button Debugger anklicken
+        - Debug-Konfiguration hinzufügen
+    Debuggen bei laufender Anwendung
+        - Hinzugefügte Konfiguration auswählen
+        - Auf Start-Button klicken
+        - Thread auswählen
+
+    ------------------------------------------
     CLI Entity-Framework
     ------------------------------------------
     dotnet ef migrations add NameOfMigration
@@ -375,38 +386,6 @@ Um das Repository zu initialisieren ist wie folgt vorzugehen:
     Hinweis: Das oberste Tag enthält die CSS-Anweisung fixed-top, welche allerdings dazu führt,
     dass nachfolgende HTML-Tags (wie z.B. die Headline der Applikation) im oberen Bereich
     durch die Navigation verdeckt werden.
-
-    Angular-Formulare
-    1) Damit Angular mit Formularen umgehen kann, sind zunächst in app.module.ts
-       Anweisungen zum Import von FormsModule einzufügen.
-
-    2) Ts-Datei der Komponente wie folgt anzupassen
-        --> Anlegen einer Funktion zur Verarbeitung der Formular-Eingaben
-        --> Variabel zur Aufnahme des Objekts anlegen (nachfolgend als varObjectName bezeichnet)
-
-    3) Das Html-Formular ist wie folgt anzupassen:
-        - Attribute dem Forumlar-Tag hinzufügen 
-            -     #nameDesForms="ngForm"
-            -     (ngSubmit)="formFunction()"
-        - Attribute den Eingabe-Controls hinzufügen
-            - name="NameDesControls"
-            - required               
-              --> wenn Eingabe zwingend erforderlich ist
-            - [(ngModel)]="varObjectName.attributname"
-              --> Verbindet das Control mit dem Datenmodell
-              --> mittels Code-Snippet a-N kann die Eingabe erleichtert werden
-            - #VariabelName="ngModel" 
-            --> Diese Angabe ist NICHT erforderlich, dient aber einem einfacheren Zugriff auf das Control
-            --> Mit Hilfe dieser Angabe wird eine Variabel erstellt,
-                die ebenfalls an das Datenmodell und das Control gebunden wird.
-                Der Control-Value wird damit automatisch in diese Variabel übertragen
-            --> Mit folgendem Code könnte dann auf den Inhalt des Controls auch außerhalb
-                des Formulars zugegriffen werden.
-                {{VariabelName.value}}
-        - Attribut dem Button hinzufügen
-            - [disabled]="!nameDesForms.valid"
-            --> Durch die Angabe, wird der Button erst aktiviert, wenn die erforderlichen
-                Angaben für das Formular vollständig sind.
 
     Angular-Service
     Um Funktionen innerhalb von Angular wieder verwenden zu können, ist es ratsam diese
@@ -721,6 +700,18 @@ Im Parent-Element kann ergänzend eine Pfad-Angabe definiert werden, die beim Pr
 der Child-Elemente als Prefix der Pfadangabe verwendet wird. Im Standardfall ist der Pfad
 des Parent-Elementes daher eher nur ein leerer String.
 
+Eine Guard-Komponente kann auch dazu verwendet werden, dem User eine Warnung anzuzeigen,
+wenn er in einem Forumlar eine Änderung vorgenommen hat, die noch nicht gespeichert wurde,
+und er nun auf einen Link in der Navigation klickt um die aktuelle Seite zu verlassen.
+Ein solcher Rout-Guard wurde in der Klasse _guards/prevent-unsaved-changes realisiert.
+Zur Realisierung einer solchen Funktion muss eine Klasse erstellt werden, die die CanDeactivate-Klasse unter Angabe der relevanten
+Formular-Komponente importiert.
+In dieser Klasse wird dann eine Funktion mit dem Namen canDeactivate angelegt, 
+die einen Parameter vom Typ der relevanten Komponente entgegennimmt.
+Wie gewöhnlich muss auch diese Klasse im app.module-File importiert werden
+und in routes.ts verwendet werden.
+
+
 -----------------------------------------
 TypeScript: 
 -----------------------------------------
@@ -856,4 +847,68 @@ In der Html-Seite der Komponente wird folgendes Tag eingefügt.
     <ngx-gallery [options]="galleryOptions" [images]="galleryImages"></ngx-gallery>
 
 
+-----------------------------------------
+- Angular Formular Verarbeitung
+-----------------------------------------
 
+    1) Damit Angular mit Formularen umgehen kann, sind zunächst in app.module.ts
+       Anweisungen zum Import von FormsModule einzufügen.
+
+    2) Die TypeScript-Datei der Komponente ist wie folgt anzupassen:
+        --> Anlegen einer Funktion zur Verarbeitung der Formular-Eingaben
+        --> Variabel zur Aufnahme des Objekts anlegen (nachfolgend als varObjectName bezeichnet)
+
+    3) Das Html-Formular ist wie folgt anzupassen:
+        - Attribute dem Forumlar-Tag hinzufügen 
+            -     #nameDesForms="ngForm"
+            -     (ngSubmit)="formFunction()"
+            -     Id des Formulars definieren
+            Durch diese Angabe wird dem Forumlar ein Name zugewiesen, der dann als Variabel für
+            den programmatischen Zugriff auf das Formular verwendet werden kann.
+            Die Id des Formular wird zwar nicht von Angular verwendet, sollten 
+            Außerdem erfolgt durch die Zuweisung von ngForm eine Datenbindung sowie die Zuweisung 
+            verschiedenen Attribute und Funktionen, die in ngForm gekapselt sind.
+            ngForm-Attribute:
+                nameDesForms.dirty           --> zeigt an, ob es Änderung in den Formular-Feldern gab.
+
+        - Attribute den Eingabe-Controls hinzufügen
+            - name="NameDesControls"
+            - required               
+              --> wenn Eingabe zwingend erforderlich ist
+            - [(ngModel)]="varObjectName.attributname"
+              --> Verbindet das Control mit dem Datenmodell
+              --> mittels Code-Snippet a-N kann die Eingabe erleichtert werden
+            - #VariabelName="ngModel" 
+            --> Diese Angabe ist NICHT erforderlich, dient aber einem einfacheren Zugriff auf das Control
+            --> Mit Hilfe dieser Angabe wird eine Variabel erstellt,
+                die ebenfalls an das Datenmodell und das Control gebunden wird.
+                Der Control-Value wird damit automatisch in diese Variabel übertragen
+            --> Mit folgendem Code könnte dann auf den Inhalt des Controls auch außerhalb
+                des Formulars zugegriffen werden.
+                {{VariabelName.value}}
+        - Attribut dem Button hinzufügen
+            - [disabled]="!nameDesForms.valid"
+            --> Durch die Angabe, wird der Button erst aktiviert, wenn die erforderlichen
+                Angaben für das Formular vollständig sind.
+
+    4) Im Typesript der Formular-Komponente ist der Dekorator @ViewChild mit Bezug
+        auf das relevante Formular einzufügen. Wie üblich ist auch für diesen Dekorator
+        eine Import-Anweisung zu Beginn des TypeScripts aufzunehmen.
+        Dieser ermöglicht den Zugriff auf die Attribute des Formulars mittels einer Variabel.
+        Sollte eine Änderung am Formular vorgenommen werden, so spiegelt sich diese Änderung
+        auch in der Variabel wieder.
+          @ViewChild('NameOfForm') myFormVar: NgForm;
+        Die Variabel myFormVar ist hierbei vom Typ NgForm und beinhaltet eine Two-Way-Datenbindung 
+        und bietete eine Reihe von Funktionen an, z.B.:
+            myFormVar.reset()           --> Beendet Dirty-Read-Modus
+            myFormVar.reset(myObject)   --> Beendet Dirty-Read-Modus, behält aber die gemachten Eingaben
+                                            (basierend auf dem relevanten Datenobjekt)
+
+
+-----------------------------------------
+- Events außerhalb der Angular-Applikation
+-----------------------------------------
+Mittels des Imports des HostListener-Dekorator können Events definiert werden,
+die sich außerhalb der Angular-Applikation befinden. So kann z.B. auch das beforeunload-EventEmitter
+der Seite definiert und abgefangen werden.
+        
