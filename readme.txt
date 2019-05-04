@@ -919,4 +919,11 @@ In der Html-Seite der Komponente wird folgendes Tag eingefügt.
 Mittels des Imports des HostListener-Dekorator können Events definiert werden,
 die sich außerhalb der Angular-Applikation befinden. So kann z.B. auch das beforeunload-EventEmitter
 der Seite definiert und abgefangen werden.
-        
+
+-----------------------------------------
+- Upload von Bildern
+-----------------------------------------
+Bilder, die vom User auf die Site hochgeladen werden können,
+werden in der Cloud (Coudinary.com) gespeichert.
+Nach dem Anlegen eines Accounts werden in der Datei appsettings.json die Account-Daten
+für den Zugriff auf die Cloud hinterlegt.
