@@ -34,8 +34,15 @@ export class UserService {
     // return this.http.get<User[]>(this.baserUrl + 'users', httpOptions);
   }
 
+  // Daten des angegebenen Users (id) laden
   getUser(id: number): Observable<User> {
     return this.http.get<User>(this.baserUrl + 'users/' + id);
     // return this.http.get<User>(this.baserUrl + 'users/' + id, httpOptions);
+  }
+
+  // Daten des angegebenen Users (id) in der Datenbank speichern.
+  // Die Daten befinden sich in der Variabel user die vom Typ User ist.
+  updateUser(id: Number, user: User) {
+    return this.http.put(this.baserUrl + 'users/' + id,user);
   }
 }

@@ -20,9 +20,17 @@ VS Code (mit nachfolgenden Extensions)
 Angular CLI     --> npm install -g @angular/cli
 Angular 7.x     --> ng new ApplicationName --style css
 Bootstrap 4.x   --> npm install Bootstrap
-Font-Awesome    --> npm font-awesome
+Font-Awesome    --> npm install font-awesome
 Git             --> https://git-scm.com/download/win
 
+------------------------------------------
+NPM Befehle
+------------------------------------------
+npm install Paket -g --> globales installieren eines Paketes
+npm ls Paket         --> Abhängigkeiten eines Paketes anzeigen
+npm show Paket version --> Anzeigen der verwendeten Version des Paketes
+npm audit               --> Prüft, ob bekannte Sicherheitslücken existieren
+npm audit fix           --> versucht die Sicherheitslücken zu schließen
 
 Die Applikation besteht aus zwei Einzel-Applikationen, die in jeweils
 eigenen Unterordnern angelgt wurden.
