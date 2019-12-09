@@ -30,7 +30,7 @@ constructor(private http: HttpClient) { }
 // Die Definition eines dritten Parameters ist in diesem Fall nicht notwendig.
 // Dieser würde verwendet werden, wenn der aufgerufene Webservice per Standard
 // kein JSON-Objekt erwarten würde (diese ist aber bei unser Server-App der Fall)
-// oder der Zugriff auf die WebApi einen authentifizierten Zugriff erforder.
+// oder der Zugriff auf die WebApi einen authentifizierten Zugriff erfordert.
 // Auch das ist hier nicht der Fall,
 // da die Login-Methode einen anonymen Zugriff gestattet.
 // Der HttpClient-Aufruf gibt als Ergebnis ein Observable zurück,

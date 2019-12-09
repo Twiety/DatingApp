@@ -9,6 +9,8 @@ namespace DatingApp.API.Models
         public string Description { get; set; }
         public DateTime DateAdded { get; set; }
         public bool IsMain { get; set; }
+        // ID des Bildes in der Cloud
+        public string PublicId  { get; set; }
 
         // Nachfolgende Angaben sind Navigations-Attribute und dienen zur Definition
         // der Relation zwischen User- und Photo-Klasse.

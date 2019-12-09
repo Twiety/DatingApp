@@ -64,7 +64,7 @@ namespace DatingApp.API
             services.AddDbContext<DataContext>(x => x.UseSqlite(Configuration.GetConnectionString("DefaultConnection")));
 
             // MVC-Funktionalität
-            // Mittels der JSON-Einstellung wird eine Loop, der sich durch ein gegenseitiges Referenzieren von Objekten
+            // Mittels der JSON-Einstellung wird ein Loop, der sich durch ein gegenseitiges Referenzieren von Objekten
             // in Entity Framework ergibt, ignoriert.
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1)
                     .AddJsonOptions(opt => {
@@ -76,6 +76,10 @@ namespace DatingApp.API
             // auf unterschiedlichen Ports zur Verfügung gestellt.
             // Somit kommt es zu einem Cross-Domain-Zugriff der per Standard nicht erlaubt ist.
             services.AddCors();
+
+            // Aus der Konfiguration den Abschnitt mit dem Namen CloudinarySettings laden
+            // und damit ein Objekt vom Typ CloudinarySettings initialisieren.
+            services.Configure<CloudinarySettings>(Configuration.GetSection("CloudinarySettings"));
 
             // Tool um ein automatisches Mapping der Properties zwischen zwei Klassen zu erreichen.
             // Das Abbilden der Eigenschaften zwischen den Modell-Klassen und den DTO-Klassen wird

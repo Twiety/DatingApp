@@ -12,7 +12,7 @@ import { NgForm } from '@angular/forms';
 export class MemberEditComponent implements OnInit {
   // Nachfolgende Anweisung ermöglicht den Zugriff auf die Attribute des Forumlars
   // im Rahmen einer Two-Way-Datenbindung
-  @ViewChild('editForm') editForm: NgForm;
+  @ViewChild('editForm', { static: true }) editForm: NgForm;
 
   user: User;
 

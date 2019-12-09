@@ -1,4 +1,4 @@
-Zur Erstellung der Applikationen wird folgende Software verwendet
+﻿Zur Erstellung der Applikationen wird folgende Software verwendet
 Dotnet Core 2.1
 Sqlite
 VS Code (mit nachfolgenden Extensions)
@@ -17,20 +17,27 @@ VS Code (mit nachfolgenden Extensions)
 --> Path Intellisense
 --> Prettier - Code formatter
 --> TSLint
-Angular CLI     --> npm install -g @angular/cli
-Angular 7.x     --> ng new ApplicationName --style css
-Bootstrap 4.x   --> npm install Bootstrap
-Font-Awesome    --> npm install font-awesome
-Git             --> https://git-scm.com/download/win
+Angular CLI     	--> npm install -g @angular/cli
+Angular 7.x     	--> ng new ApplicationName --style css
+Bootstrap 4.x   	--> npm install bootstrap
+Font-Awesome    	--> npm install font-awesome
+Alertify		    --> npm install alertifyjs --save
+@auth0/angular-jwt	--> npm install @auth0/angular-jwt --save
+ngx-bootstrap		--> npm install ngx-bootstrap --save
+Boostrap-Theme		--> npm install bootswatch
+ngx-gallery		    --> npm install ngx-gallery --save
+Git             	--> https://git-scm.com/download/win
 
 ------------------------------------------
 NPM Befehle
 ------------------------------------------
-npm install Paket -g --> globales installieren eines Paketes
-npm ls Paket         --> Abhängigkeiten eines Paketes anzeigen
-npm show Paket version --> Anzeigen der verwendeten Version des Paketes
-npm audit               --> Prüft, ob bekannte Sicherheitslücken existieren
-npm audit fix           --> versucht die Sicherheitslücken zu schließen
+npm install Paket -g 	  --> globales installieren eines Paketes
+npm install Paket -save   --> Installieren eines Paketes innerhalb eines Projektes
+npm uninstall Paket -save --> Deinstallieren eines Paktes eines Projektes
+npm ls Paket         	  --> Abhängigkeiten eines Paketes anzeigen
+npm show Paket version 	  --> Anzeigen der verwendeten Version des Paketes
+npm audit                 --> Prüft, ob bekannte Sicherheitslücken existieren
+npm audit fix             --> versucht die Sicherheitslücken zu schließen
 
 Die Applikation besteht aus zwei Einzel-Applikationen, die in jeweils
 eigenen Unterordnern angelgt wurden.
@@ -143,7 +150,7 @@ Um das Repository zu initialisieren ist wie folgt vorzugehen:
     - Header    --> Art des Token, verwendete Verschlüsselung
     - Payload   --> zeitlicher Gültigkeitsraum, beliebige Angaben zum User
     - Secret    --> Beinhaltet obige Angaben in gehashter Form, wird allerdings nie zum Client gesendet.
-    Zur Verschlüsselung des Scret wird in appsettings.json im Bereich appsettings
+    Zur Verschlüsselung des Secret wird in appsettings.json im Bereich appsettings
     eine Variabel mit dem Namen Token angelegt. Der Value dieser Variabel wird auf
     ein möglichts komplexes Passwort (min 12 Zeichen) gesetzt.
     Anschließend wird ein Token-Descriptor erstellt.
@@ -165,10 +172,11 @@ Um das Repository zu initialisieren ist wie folgt vorzugehen:
     Damit die Applikation die Authentifizierung überhaupt prüft, ist die start.cs in zwei Punkten anzupassen.
     1) Die Authentifizierungsprüfung ist als Service in der Funktion ConfigureServices zu registrierten.
        In dieser Funktion wird mittels der Anweisung services.AddAuthentication der Service registriert
-       und konfiguriert. U.a. wird hier auch auf die Variabel Token in der Datei appsettings.json Verweisen,
+       und konfiguriert. U.a. wird hier auch auf die Variabel Token in der Datei appsettings.json verwiesen,
        die zuvor zur Verschlüsselung des Token verwendet wurde (siehe oben).
     2) In der Ausgabe-Pipeline (siehe Funktion Configure) ist der Authentifizierungs-Service einzufügen.
-       Dabei muss dieser auf jeden Fall, vor der MVC-Funktion aufgeführt werden.
+       Dieser Service muss auf jeden Fall vor der MVC-Funktion aufgeführt werden, da ansonsten der
+       Zugriff auf die Controller nicht geprüft wird.
 
     ------------------------------------------
     Abfangen von Fehlern
@@ -375,7 +383,9 @@ Um das Repository zu initialisieren ist wie folgt vorzugehen:
 
     Bootstrap und eigene Styles einbinden
     --> Zunächst muss Bootstrap mittels NPM importiert werden.
+	npm install boostrap
         Ergänzend wird außerdem font-awesome mittels NPM importiert.
+	npm install font-awesome
         Nach dem Import ist die Datei src/style.css um folgende Zeilen zu ergänzen.
             @import '../node_modules/bootstrap/dist/css/bootstrap.min.css';
             @import '../node_modules/font-awesome/css/font-awesome.min.css';
@@ -564,7 +574,7 @@ ngx-bootstrap
 Um das Einbinden von Bootstrap und eigenen Templates zu vereinfachen, wird ngx-bootstrap mittel npm installiert.
     https://valor-software.com
 Durch diese Bibliothek kann außerdem auf jquery verzichtet werden, welches eine Grundlage für Bootstrap ist.
-    npm install -ngx-bootstrap --save
+    npm install ngx-bootstrap --save
 Nach dem Installieren der Bibliothek muss die Datei app.module.ts hinsichtlich des Imports und
 der Verwendung angepasst werden. Der Import sollte dabei vor den eigenen Komponenten erfolgen.
     import { BsDropdownModule } from 'ngx-bootstrap';  
@@ -927,3 +937,8 @@ Bilder, die vom User auf die Site hochgeladen werden können,
 werden in der Cloud (Coudinary.com) gespeichert.
 Nach dem Anlegen eines Accounts werden in der Datei appsettings.json die Account-Daten
 für den Zugriff auf die Cloud hinterlegt.
+Im Ordner Helpers wird eine Klasse zur Aufnahme dieser drei Properties angelegt.
+In der startup.cs-Datei der Applikation wird dann in der Funktion startup ein Objekt von dieser Klasse
+initialisiert und mit den Werten aus der Konfiguration geladen. 
+Dies wird durch den nachfolgenden Befehl realisiert:
+    services.Configure<CloudinarySettings>(Configuration.GetSection("CloudinarySettings"));
