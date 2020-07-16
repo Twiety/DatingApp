@@ -25,7 +25,7 @@
     "bootswatch": "^4.3.1",
     "core-js": "^2.5.4",
     "font-awesome": "^4.7.0",
-    "lodash": "^4.17.15",
+    "lodash": "^4.17.19",
     "mixin-deep": "^2.0.1",
     "ngx-bootstrap": "^5.1.0",
     "ngx-gallery": "^5.9.1",
