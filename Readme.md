@@ -36,15 +36,15 @@ VS Code (mit nachfolgenden Extensions)
 
 
 ## NPM Befehle
-
+|Bedeutung|Befehl||
 |---|---|
-| `npm install Paket -g` | globales installieren eines Paketes|
-| `npm install Paket -save` | Installieren eines Paketes innerhalb eines Projektes|
-| `npm uninstall Paket -save` | Deinstallieren eines Paktes eines Projektes|
-| `npm ls Paket` | Abhängigkeiten eines Paketes anzeigen|
-| `npm show Paket version` | Anzeigen der verwendeten Version des Paketes|
-| `npm audit` | Prüft, ob bekannte Sicherheitslücken existieren|
-| `npm audit fix` | versucht die Sicherheitslücken zu schließen|
+| globales installieren eines Paketes | `npm install Paket -g` |
+| Installieren eines Paketes innerhalb eines Projektes| `npm install Paket -save` |
+| Deinstallieren eines Paktes eines Projektes| `npm uninstall Paket -save` |
+| Abhängigkeiten eines Paketes anzeigen| `npm ls Paket` |
+| Anzeigen der verwendeten Version des Paketes| `npm show Paket version` |
+| Prüft, ob bekannte Sicherheitslücken existieren | `npm audit` |
+| versucht die Sicherheitslücken zu schließen | `npm audit fix` |
 
 Die Applikation besteht aus zwei Einzel-Applikationen, die in jeweils
 eigenen Unterordnern angelgt wurden.
@@ -84,7 +84,7 @@ Um das Repository zu initialisieren ist wie folgt vorzugehen:
 
  Das Ausführen der Applikation erfolgt innerhalb des Ordners
  DatingApp.API mit folgendem Befehl:
-`dotnet run (oder) dotnet watch run`
+`dotnet run` (oder) `dotnet watch run`
 
 ### CodeFirst-Modell
 Zum Erstellen der Datenbank wird das Prinzip "CodeFirst-Modell" angewendet.
@@ -723,15 +723,15 @@ Ein Interface-Definition innerhalb von TypeScript sieht wie folgt aus
 Ein Observable wird im Rahmen eines asychronen Aufrufs als Funktionsergebnis zurückgegeben.
 Das Observable beinhaltet seinerseits generische Objekte.
 Allgemeine Observable-Definition:
-getObservable() {
+`getObservable() {
     return this.http.get(Url);
-}
+}`
 
 Die Definition eines Observable zum Ausführen eines API-Requests unter Verwendung einer 
 generischen Klassen-Definition sieht wie folgt aus:
-    getObservable(): Observable<DataTypeName> {
+`getObservable(): Observable<DataTypeName> {
         return this.http.get<DataTypeName>(Url);
-    }
+}`
 
 Nachfolgende Funktion verwendet zusätzlich bei der Abfrage eine HttpOption
 um das Authentifizieruns-Token an den Server zu senden.
@@ -778,8 +778,8 @@ Zur Vermeidung dieses Fehlers stehen zwei Möglichkeiten zur Verfügung.
     die als Parameter die aktivierte Route entgegennimmt und als Ergebnis eine Observable zurückgibt.
     Ein Subscribe des Observables erfolgt hier nicht. Hier erfolgt nur eine Auswertung des Fehlerfalles
     mittels der Syntax von rxjs.
-    Beispiel:
-        resolve(route: ActivatedRouteSnapshot): Observable<DataClassName> {
+ Beispiel:
+`resolve(route: ActivatedRouteSnapshot): Observable<DataClassName> {
             return this.dataclassService.getData(route.params['id']).pipe(
                 catchError(error => {
                     this.alertify.error('Problem retrieving data');
@@ -787,18 +787,18 @@ Zur Vermeidung dieses Fehlers stehen zwei Möglichkeiten zur Verfügung.
                     return of(null);
                 })
             );
-        }
+        }`
     
-    Die selbst definierte Resolver-Klasse ist dann in app.modul.ts im Provider-Array anzugeben.
-    Wie immmer bedarf es dann einer weiteren Import-Anweisung in app.module.ts
+Die selbst definierte Resolver-Klasse ist dann in app.modul.ts im Provider-Array anzugeben.
+Wie immmer bedarf es dann einer weiteren Import-Anweisung in app.module.ts
     
-    Als nächstes muss in der betreffenden Komponente die Funktion ngOnInit geändert werden.
-    Statt dem bisherigen direkten Aufruf einer Funktion zum Laden der benötigten Daten, erfolgt nun
-    ein Subscribe zum Empfangen des Observables des ActiveRoute-Objektes, welches im Konstruktor der Komponente injeziert wurde.
-    Diese Funktion gestaltet sich wie folgt:
-        this.route.data.subscribe(data => {
-            this.dataclassName = data['dataclassName'];
-        });
+Als nächstes muss in der betreffenden Komponente die Funktion ngOnInit geändert werden.
+Statt dem bisherigen direkten Aufruf einer Funktion zum Laden der benötigten Daten, erfolgt nun
+ein Subscribe zum Empfangen des Observables des ActiveRoute-Objektes, welches im Konstruktor der Komponente injeziert wurde.
+Diese Funktion gestaltet sich wie folgt:
+   `this.route.data.subscribe(data => {
+       this.dataclassName = data['dataclassName'];
+    });`
 
 
     Abschließend ist im router-Modul die Verwendung des Resolvers anzugeben (siehe routes.ts)
@@ -860,7 +860,7 @@ In der Html-Seite der Komponente wird folgendes Tag eingefügt.
                 des Formulars zugegriffen werden.
                 {{VariabelName.value}}
         - Attribut dem Button hinzufügen
-            - [disabled]="!nameDesForms.valid"
+            - `[disabled]="!nameDesForms.valid"`
             --> Durch die Angabe, wird der Button erst aktiviert, wenn die erforderlichen
                 Angaben für das Formular vollständig sind.
 
@@ -893,4 +893,4 @@ Im Ordner Helpers wird eine Klasse zur Aufnahme dieser drei Properties angelegt.
 In der startup.cs-Datei der Applikation wird dann in der Funktion startup ein Objekt von dieser Klasse
 initialisiert und mit den Werten aus der Konfiguration geladen. 
 Dies wird durch den nachfolgenden Befehl realisiert:
-    services.Configure<CloudinarySettings>(Configuration.GetSection("CloudinarySettings"));
+    `services.Configure<CloudinarySettings>(Configuration.GetSection("CloudinarySettings"));`
