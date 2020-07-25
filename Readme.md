@@ -21,29 +21,30 @@ VS Code (mit nachfolgenden Extensions)
 - Prettier - Code formatter
 - TSLint
 
-|-------------------|-----------------------------------------|
-|Angular CLI     	| `npm install -g @angular/cli`           |
-|Angular 7.x     	| `ng new ApplicationName --style css`    |
-|Bootstrap 4.x   	| `npm install bootstrap`                 |
-|Font-Awesome    	| `npm install font-awesome`              |
-|Alertify		    | `npm install alertifyjs --save`         |
-||@auth0/angular-jwt| `npm install @auth0/angular-jwt --save` |
-|ngx-bootstrap		| `npm install ngx-bootstrap --save`      |
-|Boostrap-Theme		| `npm install bootswatch`                |
-|ngx-gallery        | `npm install ngx-gallery --save`        |
-|Git                | https://git-scm.com/download/win        |
+| Komponente         | Befehl                                  |
+|--------------------|-----------------------------------------|
+| Angular CLI     	 | `npm install -g @angular/cli`           |
+| Angular 7.x     	 | `ng new ApplicationName --style css`    |
+| Bootstrap 4.x   	 | `npm install bootstrap`                 |
+| Font-Awesome    	 | `npm install font-awesome`              |
+| Alertify		     | `npm install alertifyjs --save`         |
+| @auth0/angular-jwt | `npm install @auth0/angular-jwt --save` |
+| ngx-bootstrap		 | `npm install ngx-bootstrap --save`      |
+| Boostrap-Theme	 | `npm install bootswatch`                |
+| ngx-gallery        | `npm install ngx-gallery --save`        |
+| Git                | https://git-scm.com/download/win        |
 
 
 ## NPM Befehle
 
 |---|---|
-|`npm install Paket -g` | globales installieren eines Paketes|
-|`npm install Paket -save` | Installieren eines Paketes innerhalb eines Projektes|
-|`npm uninstall Paket -save` | Deinstallieren eines Paktes eines Projektes|
-|`npm ls Paket` | Abhängigkeiten eines Paketes anzeigen|
-|`npm show Paket version` | Anzeigen der verwendeten Version des Paketes|
-|`npm audit` | Prüft, ob bekannte Sicherheitslücken existieren|
-|`npm audit fix` | versucht die Sicherheitslücken zu schließen|
+| `npm install Paket -g` | globales installieren eines Paketes|
+| `npm install Paket -save` | Installieren eines Paketes innerhalb eines Projektes|
+| `npm uninstall Paket -save` | Deinstallieren eines Paktes eines Projektes|
+| `npm ls Paket` | Abhängigkeiten eines Paketes anzeigen|
+| `npm show Paket version` | Anzeigen der verwendeten Version des Paketes|
+| `npm audit` | Prüft, ob bekannte Sicherheitslücken existieren|
+| `npm audit fix` | versucht die Sicherheitslücken zu schließen|
 
 Die Applikation besteht aus zwei Einzel-Applikationen, die in jeweils
 eigenen Unterordnern angelgt wurden.
